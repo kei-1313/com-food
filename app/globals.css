@@ -2,4 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    font-family: "Noto Sans JP", sans-serif;
+  }
 
+  img {
+    width: 100%;
+  }
+
+  table,
+  td,
+  th,
+  tr {
+    padding: 0;
+  }
+}
+
+@layer components {
+  .adminPageTitle {
+    @apply text-3xl tracking-wider font-bold text-black text-center
+  }
+
+  .error {
+    @apply text-red-600 text-sm tracking-wider mt-2
+  }
+}
