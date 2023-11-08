@@ -1,4 +1,3 @@
-'use client'
 import { cookies } from 'next/headers'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { redirect } from 'next/navigation'
@@ -17,9 +16,8 @@ const LoginPage = async () => {
   if(session) {
     redirect('/')
   }
-	return (
-		<Login/>
-	)
+	return <Login/>
+
 }
 
 export default LoginPage
