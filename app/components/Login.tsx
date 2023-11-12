@@ -60,7 +60,7 @@ const Login = () => {
   }
   
 	return (
-		<div className="max-w-lg m-auto mt-20">
+		<div className="max-w-lg m-auto mt-20 mb-20">
       <h2 className="adminPageTitle mb-10">ログイン</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-5">
