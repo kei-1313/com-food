@@ -40,33 +40,38 @@ export interface Database {
           avatar_url: string | null
           created_at: string
           email: string | null
-          id: number
+          id: string
           name: string | null
-          password: string | null
         }
         Insert: {
           authority_id?: number | null
           avatar_url?: string | null
           created_at?: string
           email?: string | null
-          id?: number
+          id: string
           name?: string | null
-          password?: string | null
         }
         Update: {
           authority_id?: number | null
           avatar_url?: string | null
           created_at?: string
           email?: string | null
-          id?: number
+          id?: string
           name?: string | null
-          password?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "admin_users_authority_id_fkey"
             columns: ["authority_id"]
+            isOneToOne: false
             referencedRelation: "authoritys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_users_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -239,6 +244,7 @@ export interface Database {
           {
             foreignKeyName: "objects_bucketId_fkey"
             columns: ["bucket_id"]
+            isOneToOne: false
             referencedRelation: "buckets"
             referencedColumns: ["id"]
           }
