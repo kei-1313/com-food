@@ -9,8 +9,6 @@ type AdminUserType = Database['public']['Tables']['admin_users']['Row']
 
 
 const Navigation = ({session, adminUser}: {session: Session | null, adminUser: AdminUserType | null}) => {
-  console.log(session);
-  
 	return (
     <div>
       {session ?
