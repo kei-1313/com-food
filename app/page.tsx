@@ -2,6 +2,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 
 import type  {Database } from '@/lib/database.types'
+import Sidebar from './components/Sidebar'
 
 const Home = async () => {
   const supabase = createServerComponentClient<Database>({
@@ -13,7 +14,14 @@ const Home = async () => {
 
   return (
     <div>
-      {session ? <div>ログイン済み</div> : <div>未ログイン</div>}
+      {session ?
+      <div>
+        <Sidebar/>
+      </div> :
+      <div>
+        未ログイン
+      </div>
+      }
     </div>
   )
 }

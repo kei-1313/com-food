@@ -8,17 +8,25 @@ import type { Database } from '@/lib/database.types'
 type AdminUserType = Database['public']['Tables']['admin_users']['Row']
 
 
-const Navigation = ({session, adminUser}: {session: Session | null, adminUser: AdminUserType | null}) => { 
+const Navigation = ({session, adminUser}: {session: Session | null, adminUser: AdminUserType | null}) => {
+  console.log(session);
+  
 	return (
-		<header className="shadow-lg shadow-gray-100">
-      <div className="py-5 px-5 container max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="font-bold text-xl cursor-pointer">
-          com-food
-        </Link>
+    <div>
+      {session ?
+        <div></div>
+        :
+        <header className="shadow-lg shadow-gray-100">
+        <div className="py-5 px-5 container max-w-7xl mx-auto flex items-center justify-between">
+          <Link href="/" className="font-bold text-xl cursor-pointer">
+            com-food
+          </Link>
 
-        <p>{adminUser?.email}</p>
-      </div>
-    </header>
+          <p>{adminUser?.email}</p>
+        </div>
+      </header>
+      }
+    </div>
 	)
 }
 
