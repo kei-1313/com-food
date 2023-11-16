@@ -7,6 +7,10 @@
     font-family: "Noto Sans JP", sans-serif;
   }
 
+  body {
+    letter-spacing: 0.05em;
+  }
+
   img {
     width: 100%;
   }
