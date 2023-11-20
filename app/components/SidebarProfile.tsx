@@ -28,7 +28,7 @@ const SidebarProfile = () => {
 
 
 	return (
-		<div className="p-10 w-[300px]">
+		<div className="p-10 w-[300px] ml-[60px]">
       <h3 className="text-base text-black font-bold border-b border-gray-200 pb-3 mb-3">プロフィール設定</h3>
       <ul>
         {subNavigation.map((item, index) => (

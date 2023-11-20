@@ -21,6 +21,8 @@ const config: Config = {
         lightPurple: '#F8F9FD',
         currentPurple: '#e9e7fd',
         blackPurple: '#21213b',
+        activePurple: '#563bff',
+        orange: '#fc783f',
       }
     },
   },
