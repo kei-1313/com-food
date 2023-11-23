@@ -63,6 +63,7 @@ const ChangePassword = () => {
       return
     }finally {
       setErrorMessage('')
+      setLoading(false)
       router.refresh()
     }
   }
@@ -75,7 +76,7 @@ const ChangePassword = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-8">
             <label className="text-base font-bold block mb-2">新しいパスワード</label>
-            <span className="text-xs text-attentionPurple block mb-2">6文字以上で入力してください。大文字、小文字、数字を含める必要があります。</span>
+            <span className="text-xs text-attentionPurple block mb-2">6文字以上の大文字、小文字、数字で入力してください。</span>
             <input 
               type="password"
               id="newPassword"
