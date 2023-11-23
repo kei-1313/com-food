@@ -11,7 +11,6 @@ import type { Database } from '@/lib/database.types'
 import useStore from '@/store'
 import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid'
-import { refFromURL } from 'firebase/database';
 type Schema = z.infer<typeof schema>
 
 // 入力データの検証ルールを定義
@@ -201,7 +200,7 @@ const AdminUser = () => {
 				{loading ? (
             <Loading />
           ) : (
-					<button className="text-sm bg-orange px-4 py-2 text-center rounded border border-orange block text-white bold hover:opacity-80">保存する</button>
+					<button type="submit" className="text-sm bg-orange px-4 py-2 text-center rounded border border-orange block text-white bold hover:opacity-80">保存する</button>
 				)}
 				</div>
 			</form>

@@ -18,7 +18,7 @@ const SidebarProfile = () => {
     },
     {
       name: 'メールアドレス変更',
-      href: '/admin/settings/password',
+      href: '/admin/settings/email',
     },
     {
       name: 'ログアウト',
