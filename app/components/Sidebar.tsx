@@ -31,7 +31,7 @@ const Sidebar = () => {
           </div>
         </Link>
       </div>
-      {currentUrl === '/admin/user' || currentUrl === '/admin/settings/password' || currentUrl === '/admin/settings/logout' ? (
+      {currentUrl === '/admin/user' || currentUrl === '/admin/settings/password' || currentUrl === '/admin/settings/logout' || currentUrl === '/admin/settings/email' ? (
         <SidebarProfile/>
       ) :
         <SidebarContact/>
