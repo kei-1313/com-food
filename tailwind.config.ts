@@ -16,6 +16,7 @@ const config: Config = {
       colors: {
         noActivePurple: '#9393b2',
         activePurple: '#563bff',
+        attentionPurple: '#68688a'
       },
       backgroundColor: {
         lightPurple: '#F8F9FD',
