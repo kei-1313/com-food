@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <g id="PC" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="API作成_JSONモデルを定義" transform="translate(-470.000000, -14.000000)">
+            <g id="Group" transform="translate(470.000000, 14.000000)">
+                <circle id="Oval" fill="#CACAE7" cx="16" cy="16" r="16"></circle>
+                <circle id="Oval" fill="#FFFFFF" cx="16" cy="11" r="5"></circle>
+                <path d="M25,24 C25,19.0294373 23.2,17 16,17 C8.8,17 7,19.0294373 7,24 C10.6,24 19.6,24 25,24 Z" id="Oval" fill="#FFFFFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>
