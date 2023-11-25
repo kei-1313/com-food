@@ -21,7 +21,7 @@ const Sidebar = () => {
   }, [user])
 
 	return (
-    <div className="flex">
+    <div className="flex fixed top-0 left-0 z-50">
       <div className="w-[60px] bg-blackPurple h-full min-h-screen flex flex-col justify-end fixed top-0 left-0">
         <Link href="/admin/user/" className="block">
           <div className="w-[36px] mx-auto pb-4 cursor-pointer relative">
