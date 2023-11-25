@@ -95,7 +95,7 @@ const Email = () => {
   }
  
 	return (
-		<div className="p-10 w-[560px]">
+		<div className="py-10 pr-10 w-[860px] pl-[360px]">
 			<h2 className="text-2xl font-bold mb-6">メールアドレス変更</h2>
 			<p className="text-sm text-red-500 mt-2 mb-4 font-bold">{ errorMessage }</p>
 			<p className="text-sm text-green-500 mt-2 mb-4 font-bold">{ successMessage }</p>
