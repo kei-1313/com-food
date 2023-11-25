@@ -52,7 +52,7 @@ const UserContact = () => {
 							/>
 							{/* <div className="my-3 text-sm text-red-500">エラー</div> */}
 					</div>
-					<div className="mt-8 ">
+					<div className="mt-8">
 					{loading ? (
 							<Loading />
 						) : (
