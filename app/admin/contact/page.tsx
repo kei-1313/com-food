@@ -8,7 +8,7 @@ import AdminContact from '@/app/components/AdminContact'
 const AdminContactPage = async () => {
   const supabase = createServerComponentClient<Database>({
     cookies,
-  })
+  }) 
 
   // セッションの取得
   const {
