@@ -90,7 +90,7 @@ const Signup = () => {
           <label className="mb-2 block tracking-wider">名前</label>
           <input
             type="text" 
-            {...register("name", { required: true })} 
+            {...register("name", { required: true })}
             className="border-[2px] rounded-md w-full py-2 px-3 focus:outline-none focus:border-yellow-500"
           />
           <p className="error">{errors.name?.message}</p>
