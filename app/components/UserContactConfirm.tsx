@@ -3,13 +3,19 @@
 import { useState } from "react"
 import PageTitle from "./PageTitle"
 import Loading from '@/app/loading'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const UserContactConfirm = () => {
   const router = useRouter()
 	const [loading, setLoading] = useState(false)
 	const [ errorMessage, setErrorMessage ] = useState('')
 	const [successMessage, setSuccessMessage] = useState('')
+	const searchParams = useSearchParams();
+
+	const name = searchParams.get("name")
+
+	console.log(name);
+	
 
   const handleSubmit = () => {
 
