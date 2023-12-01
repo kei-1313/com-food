@@ -9,6 +9,7 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import type { Database } from '@/lib/database.types'
+import Link from "next/link"
 
 type Schema = z.infer<typeof schema>
 
@@ -25,6 +26,7 @@ const UserContact = () => {
 	const [loading, setLoading] = useState(false)
 	const [ errorMessage, setErrorMessage ] = useState('')
 	const [successMessage, setSuccessMessage] = useState('')
+	const [contactData, setContactData] = useState({})
 
 	const {
     register,
@@ -44,27 +46,14 @@ const UserContact = () => {
     setSuccessMessage('')
 
 		try {
-			const contactData = {
+			setContactData({...contactData, 
 				name: data.name,
 				email: data.email,
 				subject: data.subject,
 				content: data.content
-			}
-			
-			await fetch("api/contact", {
-				method: "POST",
-				headers: {
-					Accept: "application/json, text/plain",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(contactData)
-			}).then(res => {
-				if(res.status === 200) {
-					setSuccessMessage('お問い合わせが完了しました')
-					reset()
-				}
 			})
-      
+			setSuccessMessage("確認画面に遷移します。")
+			router.push("/contact/confirm")
     } catch (error) {
       setErrorMessage('エラーが発生しました。' + error)
       return
@@ -117,7 +106,7 @@ const UserContact = () => {
 					<div className="mt-8">
 							<label className="text-base font-bold mb-2 block">お問い合わせ内容<span className="text-red-500 text-sm inline-block ml-1">(必須)</span></label>
 							<textarea 
-								placeholder="comfood@gmail.com"
+								placeholder="お問い合わせ内容"
 								className="text-sm h-[200px] rounded tracking-wider border-gray-200 border-[1px] block py-3 px-3 w-full focus:border-activePurple focus:border-[2px] focus:outline-none leading-6"
 								autoComplete="on"
 								{...register("content", { required: true })}
@@ -128,7 +117,16 @@ const UserContact = () => {
 					{loading ? (
 							<Loading />
 						) : (
-						<button type="submit" className="text-sm max-md:w-full  m-auto bg-orange px-4 tracking-wider py-2 text-center rounded border border-orange block text-white bold hover:opacity-80">確認画面へ</button>
+						<button type="submit" className="text-sm max-md:w-full  m-auto bg-orange px-4 tracking-wider py-2 text-center rounded border border-orange block text-white bold hover:opacity-80">
+							<Link
+								href={{
+									pathname: '/contact/confirm',
+									query: contactData,
+								}}
+							>
+								確認画面へ
+							</Link>
+						</button>
 					)}
 					</div>
 				</form>
