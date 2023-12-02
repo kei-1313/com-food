@@ -2,11 +2,14 @@
 
 import { useState } from "react"
 import PageTitle from "./PageTitle"
+
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+
 import Loading from '@/app/loading'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useFormContext, SubmitHandler } from "react-hook-form";
 import * as z from 'zod'
-
+import type { Database } from '@/lib/database.types'
 type Schema = z.infer<typeof schema>
 
 // 入力データの検証ルールを定義
@@ -22,6 +25,11 @@ const UserContactConfirm = () => {
 	const [loading, setLoading] = useState(false)
 	const [ errorMessage, setErrorMessage ] = useState('')
 	const [successMessage, setSuccessMessage] = useState('')
+
+	const supabase = createClientComponentClient<Database>()
+
+	console.log();
+	
 
 	const {
     handleSubmit,
@@ -44,6 +52,16 @@ const UserContactConfirm = () => {
     setSuccessMessage('')
 
 		try {
+			//データベースにお問い合わせのデータを保存する
+			const { error: errorContact } = await supabase
+			.from("contacts")
+			.insert({name: values.name, email: values.email, title: values.subject, description: values.content})
+
+			if(errorContact) {
+				setErrorMessage('エラーが発生しました' + errorContact)
+				return
+			}
+
 			await fetch("api/contact", {
 				method: "POST",
 				headers: {
