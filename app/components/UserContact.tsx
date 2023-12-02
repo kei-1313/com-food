@@ -1,16 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import PageTitle from "./PageTitle"
 import Loading from '@/app/loading'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useFormContext, SubmitHandler } from 'react-hook-form'
 import * as z from 'zod'
-import type { Database } from '@/lib/database.types'
-import Link from "next/link"
-
 type Schema = z.infer<typeof schema>
 
 // 入力データの検証ルールを定義
@@ -26,40 +22,38 @@ const UserContact = () => {
 	const [loading, setLoading] = useState(false)
 	const [ errorMessage, setErrorMessage ] = useState('')
 	const [successMessage, setSuccessMessage] = useState('')
-	const [contactData, setContactData] = useState({})
+	const searchParams = useSearchParams()
 
 	const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
-    //初期値
-    defaultValues: {name: '', email: '', subject: '', content: ''},
-    //入力値の検証
-    resolver: zodResolver(schema)
-  })
+  } = useFormContext<Schema>()
 
-	const onSubmit: SubmitHandler<Schema> = async (data) => {
+	const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams)
+      params.set(name, value)
+ 
+      return params.toString()
+    },
+    [searchParams]
+  )
+
+	const onSubmit: SubmitHandler<any> = async (data) => {
     setLoading(true)
     setErrorMessage('')
     setSuccessMessage('')
-
+		
 		try {
-			setContactData({...contactData, 
-				name: data.name,
-				email: data.email,
-				subject: data.subject,
-				content: data.content
-			})
 			setSuccessMessage("確認画面に遷移します。")
-			router.push("/contact/confirm")
+			router.push("/contact/" + "?" + createQueryString('confirm', '1'))
     } catch (error) {
       setErrorMessage('エラーが発生しました。' + error)
       return
     } finally {
-      setLoading(false)
-      router.refresh()
+			setLoading(false)
     }
   }
 
@@ -67,6 +61,7 @@ const UserContact = () => {
 	return (
 		<div className="py-20">
 			<PageTitle title={"お問い合わせ"}/>
+			<p className="text-sm text-red-500 mt-2 mb-4 font-bold">{ errorMessage }</p>
 			<p className="text-sm text-green-500 text-center mt-2 mb-4 font-bold">{ successMessage }</p>
 			<div className="max-w-[600px] w-full mx-auto px-4">
 				<form onSubmit={handleSubmit(onSubmit)}>
@@ -79,7 +74,7 @@ const UserContact = () => {
 								autoComplete="on"
 								{...register("name")}
 							/>
-							{/* <div className="my-3 text-sm text-red-500">{errors.name?.message}</div> */}
+							<div className="my-3 text-sm text-red-500">{errors.name?.message}</div>
 					</div>
 					<div className="mt-8">
 							<label className="text-base font-bold mb-2 block">メールアドレス<span className="text-red-500 text-sm inline-block ml-1">(必須)</span></label>
@@ -101,7 +96,7 @@ const UserContact = () => {
 								autoComplete="on"
 								{...register("subject")}
 							/>
-							{/* <div className="my-3 text-sm text-red-500">{errors.subject?.message}</div> */}
+							<div className="my-3 text-sm text-red-500">{errors.subject?.message}</div>
 					</div>
 					<div className="mt-8">
 							<label className="text-base font-bold mb-2 block">お問い合わせ内容<span className="text-red-500 text-sm inline-block ml-1">(必須)</span></label>
@@ -109,7 +104,7 @@ const UserContact = () => {
 								placeholder="お問い合わせ内容"
 								className="text-sm h-[200px] rounded tracking-wider border-gray-200 border-[1px] block py-3 px-3 w-full focus:border-activePurple focus:border-[2px] focus:outline-none leading-6"
 								autoComplete="on"
-								{...register("content", { required: true })}
+								{...register("content")}
 							/>
 							<div className="my-3 text-sm text-red-500">{errors.content?.message}</div>
 					</div>
@@ -117,15 +112,10 @@ const UserContact = () => {
 					{loading ? (
 							<Loading />
 						) : (
-						<button type="submit" className="text-sm max-md:w-full  m-auto bg-orange px-4 tracking-wider py-2 text-center rounded border border-orange block text-white bold hover:opacity-80">
-							<Link
-								href={{
-									pathname: '/contact/confirm',
-									query: contactData,
-								}}
-							>
-								確認画面へ
-							</Link>
+						<button 
+							type="submit" 
+							className="text-sm max-md:w-full  m-auto bg-orange px-4 tracking-wider py-2 text-center rounded border border-orange block text-white bold hover:opacity-80">
+							確認画面へ
 						</button>
 					)}
 					</div>
