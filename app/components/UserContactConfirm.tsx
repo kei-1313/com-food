@@ -53,7 +53,7 @@ const UserContactConfirm = () => {
 				body: JSON.stringify(values)
 			}).then(res => {
 				if(res.status === 200) {
-					setSuccessMessage("メールの送信が完了しました")
+					router.push("/contact/complete")
 				}
 			})
 		} catch (error) {

@@ -47,7 +47,6 @@ const UserContact = () => {
     setSuccessMessage('')
 		
 		try {
-			setSuccessMessage("確認画面に遷移します。")
 			router.push("/contact/" + "?" + createQueryString('confirm', '1'))
     } catch (error) {
       setErrorMessage('エラーが発生しました。' + error)
