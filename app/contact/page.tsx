@@ -23,8 +23,6 @@ const schema = z.object({
 const UserContactPage = () => {
   const searchParams = useSearchParams();
   const isConfirm = searchParams.get("confirm")
-
-  // console.log(isConfirm);
   
   const methods = useForm<Schema>({
     //初期値
@@ -33,11 +31,6 @@ const UserContactPage = () => {
     resolver: zodResolver(schema),
     mode: "onChange",
   });
-
-  // console.log(methods);
-  
-
-  
 
   return(
     <div>

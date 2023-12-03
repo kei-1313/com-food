@@ -27,8 +27,6 @@ const UserContactConfirm = () => {
 	const [successMessage, setSuccessMessage] = useState('')
 
 	const supabase = createClientComponentClient<Database>()
-
-	console.log();
 	
 
 	const {
@@ -39,7 +37,6 @@ const UserContactConfirm = () => {
 
 	//入力データの取得
   const values = getValues();
-	console.log(values);
 
 	// if (!isValid) {
   //   router.push(`/contact`);

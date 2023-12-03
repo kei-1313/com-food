@@ -9,54 +9,11 @@ import useContactStore from '@/store/contact'
 import type { Database } from '@/lib/database.types'
 import FormattedDate from './FormattedDate'
 type AdminContactType = Database['public']['Tables']['contacts']['Row']
-
 type AdminContact =  AdminContactType[]
-
-
-const contactDatas = [
-  {
-    id: 1,
-    date: '2023年11月25日',
-    name: 'アーニャ・フォージャー',
-    email: 'anya@gmail.com',
-    title: 'よろすすおねがいするます',
-    body: 'ピーナッツが食べたい、でもどこで買ったらいいかわからない',
-  },
-  {
-    id: 2,
-    date: '2023年11月25日',
-    name: 'アーニャ・フォージャー',
-    email: 'anya@gmail.com',
-    title: 'よろすすおねがいするます',
-    body: 'ピーナッツが食べたい、でもどこで買ったらいいかわからない',
-  },
-  {
-    id: 3,
-    date: '2023年11月25日',
-    name: 'アーニャ・フォージャー',
-    email: 'anya@gmail.com',
-    title: 'よろすすおねがいするます',
-    body: 'ピーナッツが食べたい、でもどこで買ったらいいかわからない',
-  },
-]
-
-
 
 const AdminContact = ({items}: {items: AdminContact | null}) => {
   const searchBox = useRef<HTMLInputElement>(null)
   const [activeItems, setActiveItems] = useState(Array(items?.length).fill(false));
-
-  const [contactData, setContactData] = useState(null)
- 
-
-  // const { contactData, setContactData } = useContactStore()
-  console.log(items);
-  
-  useEffect(() => {
-   
-  }, [])
-
-
 
   const focusSearchBox = () => {
     searchBox.current?.focus();

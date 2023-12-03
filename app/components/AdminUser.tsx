@@ -28,7 +28,6 @@ const AdminUser = () => {
 	const [email, setIsEmail] = useState('')
 	const [avatar, setAvatar] = useState<File | null>(null)
 	const [avatarUrl, setAvatarUrl] = useState('/icon_person.svg')
-	// console.log(supabase);
 	
 
 	const { user } = useStore()
@@ -39,8 +38,6 @@ const AdminUser = () => {
 	const onProfileImageClick = () => {
 		inputRef.current.click()
 	}
-
-	console.log(user);
 	
 
 	useEffect(() => {
@@ -106,12 +103,9 @@ const AdminUser = () => {
 		setLoading(true)
 		setMessage('')
 		setSuccessMessage('')
-		console.log(data);
-		
+
 		try {
 			let avatar_url = user.avatar_url
-
-			console.log(avatar_url);
 			if (avatar)  {
 				// supabaseストレージに画像アップロード
         const { data: storageData, error: storageError } = await supabase.storage
