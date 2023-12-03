@@ -4,38 +4,16 @@ import {
   MagnifyingGlassIcon,
   TrashIcon
 } from '@heroicons/react/24/outline'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import useContactStore from '@/store/contact'
+import type { Database } from '@/lib/database.types'
+import FormattedDate from './FormattedDate'
+type AdminContactType = Database['public']['Tables']['contacts']['Row']
+type AdminContact =  AdminContactType[]
 
-const contactData = [
-  {
-    id: 1,
-    date: '2023年11月25日',
-    name: 'アーニャ・フォージャー',
-    email: 'anya@gmail.com',
-    title: 'よろすすおねがいするます',
-    body: 'ピーナッツが食べたい、でもどこで買ったらいいかわからない',
-  },
-  {
-    id: 2,
-    date: '2023年11月25日',
-    name: 'アーニャ・フォージャー',
-    email: 'anya@gmail.com',
-    title: 'よろすすおねがいするます',
-    body: 'ピーナッツが食べたい、でもどこで買ったらいいかわからない',
-  },
-  {
-    id: 3,
-    date: '2023年11月25日',
-    name: 'アーニャ・フォージャー',
-    email: 'anya@gmail.com',
-    title: 'よろすすおねがいするます',
-    body: 'ピーナッツが食べたい、でもどこで買ったらいいかわからない',
-  },
-]
-
-const AdminContact = () => {
+const AdminContact = ({items}: {items: AdminContact | null}) => {
   const searchBox = useRef<HTMLInputElement>(null)
-  const [activeItems, setActiveItems] = useState(Array(contactData.length).fill(false));
+  const [activeItems, setActiveItems] = useState(Array(items?.length).fill(false));
 
   const focusSearchBox = () => {
     searchBox.current?.focus();
@@ -93,7 +71,7 @@ const AdminContact = () => {
               </tr>
             </thead>
             <tbody>
-              {contactData.map((item, index) => (
+              {items?.map((item, index) => (
                 <tr className={activeItems[index] ? "bg-currentPurple": '' + "border-b border-[#f4f4fa]"} key={item.id}>
                   <td className="py-4 px-6">
                     <div>
@@ -107,12 +85,12 @@ const AdminContact = () => {
                     />
                     </div>
                   </td>
-                  <td className="text-sm py-4 px-4">{ index + 1 }</td>
-                  <td className="text-sm py-4 px-5 whitespace-nowrap">{ item.date }</td>
+                  <td className="text-sm py-4 px-4">{ item.id }</td>
+                  <td className="text-sm py-4 px-5 whitespace-nowrap"><FormattedDate dateString={item.created_at}/></td>
                   <td className="text-sm py-4 px-5 whitespace-nowrap">{ item.name }</td>
                   <td className="text-sm py-4 px-5 whitespace-nowrap">{ item.email }</td>
                   <td className="text-sm py-4 px-5">{ item.title }</td>
-                  <td className="text-sm py-4 px-5">{ item.body }</td>
+                  <td className="text-sm py-4 px-5">{ item.description }</td>
                   <td className="text-sm py-4 px-4 cursor-pointer"><TrashIcon width={22}/></td>
                 </tr>
               ))}
