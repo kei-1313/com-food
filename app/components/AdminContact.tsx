@@ -5,7 +5,7 @@ import {
   TrashIcon
 } from '@heroicons/react/24/outline'
 import { useEffect, useRef, useState } from 'react'
-import useContactStore from '@/store/contact'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
 import FormattedDate from './FormattedDate'
 type AdminContactType = Database['public']['Tables']['contacts']['Row']
@@ -13,6 +13,7 @@ type AdminContact =  AdminContactType[]
 
 const AdminContact = ({items}: {items: AdminContact | null}) => {
   const searchBox = useRef<HTMLInputElement>(null)
+  const supabase = createClientComponentClient<Database>()
   const [activeItems, setActiveItems] = useState(Array(items?.length).fill(false));
 
   const focusSearchBox = () => {
@@ -27,6 +28,19 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
 
   const changeAllCheckedStatus = () => {
     setActiveItems(prev => prev.map(item => !item))
+  }
+
+  //クリックすると削除するためのアラートがでる、その後はいを押すと削除される
+  const handleDelete = async (index: number) => {
+    const handleDeleteResult = window.confirm("本当に削除してよろしいですか？")
+
+    if(handleDeleteResult) {
+      console.log("削除");
+      const { error } = await supabase
+        .from("contacts")
+        .delete()
+        .eq('id', index)
+    }
   }
 
 	return (
@@ -91,7 +105,7 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
                   <td className="text-sm py-4 px-5 whitespace-nowrap">{ item.email }</td>
                   <td className="text-sm py-4 px-5">{ item.title }</td>
                   <td className="text-sm py-4 px-5">{ item.description }</td>
-                  <td className="text-sm py-4 px-4 cursor-pointer"><TrashIcon width={22}/></td>
+                  <td className="text-sm py-4 px-4 cursor-pointer"><TrashIcon width={22} onClick={() => handleDelete(index + 1)}/></td>
                 </tr>
               ))}
             </tbody>
