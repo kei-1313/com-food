@@ -8,13 +8,25 @@ import { useEffect, useRef, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
 import FormattedDate from './FormattedDate'
+import { useRouter } from 'next/navigation'
 type AdminContactType = Database['public']['Tables']['contacts']['Row']
 type AdminContact =  AdminContactType[]
 
 const AdminContact = ({items}: {items: AdminContact | null}) => {
+  const router = useRouter()
   const searchBox = useRef<HTMLInputElement>(null)
   const supabase = createClientComponentClient<Database>()
   const [activeItems, setActiveItems] = useState(Array(items?.length).fill(false));
+  const [contactItems, setContactItems] = useState(items)
+
+  console.log(contactItems);
+  
+  
+  useEffect(() => {
+    setContactItems(items)
+    console.log(contactItems);
+    
+  },[contactItems])
 
   const focusSearchBox = () => {
     searchBox.current?.focus();
@@ -31,16 +43,21 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
   }
 
   //クリックすると削除するためのアラートがでる、その後はいを押すと削除される
-  const handleDelete = async (index: number) => {
+  const handleDelete = async (id: number) => {
     const handleDeleteResult = window.confirm("本当に削除してよろしいですか？")
-
+    console.log(id);
+    
     if(handleDeleteResult) {
       console.log("削除");
       const { error } = await supabase
         .from("contacts")
         .delete()
-        .eq('id', index)
+        .eq('id', id)
     }
+
+    setContactItems(items)
+
+    router.refresh()
   }
 
 	return (
@@ -85,7 +102,7 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
               </tr>
             </thead>
             <tbody>
-              {items?.map((item, index) => (
+              {contactItems?.map((item, index) => (
                 <tr className={activeItems[index] ? "bg-currentPurple": '' + "border-b border-[#f4f4fa]"} key={item.id}>
                   <td className="py-4 px-6">
                     <div>
@@ -105,7 +122,7 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
                   <td className="text-sm py-4 px-5 whitespace-nowrap">{ item.email }</td>
                   <td className="text-sm py-4 px-5">{ item.title }</td>
                   <td className="text-sm py-4 px-5">{ item.description }</td>
-                  <td className="text-sm py-4 px-4 cursor-pointer"><TrashIcon width={22} onClick={() => handleDelete(index + 1)}/></td>
+                  <td className="text-sm py-4 px-4 cursor-pointer"><TrashIcon width={22} onClick={() => handleDelete(item.id)}/></td>
                 </tr>
               ))}
             </tbody>
