@@ -15,16 +15,20 @@ type AdminContact =  AdminContactType[]
 const AdminContact = ({items}: {items: AdminContact | null}) => {
   const router = useRouter()
   const searchBox = useRef<HTMLInputElement>(null)
+  const allCheckbox = useRef<HTMLInputElement>(null)
   const supabase = createClientComponentClient<Database>()
   const [activeItems, setActiveItems] = useState(Array(items?.length).fill(false));
+  const [isAllItemsSelected, setIsAllItemsSelected] = useState(false)
+  const [isShowAllDeleteButton, setIsShowAllDeleteButton] = useState(false)
   const [contactItems, setContactItems] = useState(items)
 
-  console.log(contactItems);
+  // console.log(searchBox);
+  // console.log(activeItems);
+  
   
   
   useEffect(() => {
     setContactItems(items)
-    console.log(contactItems);
     
   },[contactItems])
 
@@ -39,7 +43,14 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
   }
 
   const changeAllCheckedStatus = () => {
+    setIsAllItemsSelected(!isAllItemsSelected)
     setActiveItems(prev => prev.map(item => !item))
+
+  }
+
+
+  const showAllDeleteButton = () => {
+    setIsShowAllDeleteButton(!isShowAllDeleteButton)
   }
 
   //クリックすると削除するためのアラートがでる、その後はいを押すと削除される
@@ -60,6 +71,8 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
     router.refresh()
   }
 
+ 
+
 	return (
 		<div className="py-3 w-full pl-[260px]">
       <h2 className="text-base text-black font-bold pb-3 mb-3 px-4">お問い合わせ</h2>
@@ -78,6 +91,20 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
         <div className="pb-11 pt-2 px-4 border-t border-[#f4f4fa]">
           <p className="text-sm text-noActivePurple">1〜9件目を表示 / 全9件</p>
         </div>
+        
+        {isAllItemsSelected &&
+          <div className='relative'>
+            <div className='ml-4'>
+              <button onClick={showAllDeleteButton} className='text-sm rounded  py-3 px-4 text-center  text-activePurple w-[10rem] font-bold border-[2px] border-activePurple'>{contactItems?.length}件を選択中</button>
+              <span onClick={changeAllCheckedStatus} className='text-sm cursor-pointer inline-block ml-8 text-attentionPurple '>全件選択削除</span>
+            </div>
+            {isShowAllDeleteButton &&
+              <div className='absolute border text-sm border-gray-300 rounded left-4 mt-1 bg-white z-10'>
+                <button className='py-4 px-4 flex gap-2'><TrashIcon width={20} />コンテンツを削除する</button>
+              </div>
+            }
+          </div>
+        }
 
         <div className="py-2 px-4 overflow-x-scroll relative w-full">
           <table className="w-full min-w-[1180px] border-collapse">
@@ -90,6 +117,8 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
                     onChange={changeAllCheckedStatus}
                     name="" 
                     id=""
+                    ref={allCheckbox}
+                    checked={isAllItemsSelected}
                   />
                 </th>
                 <th className="text-sm text-attentionPurple font-bold py-4 px-4">ID</th>
