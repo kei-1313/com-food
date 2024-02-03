@@ -22,18 +22,6 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
   const [isShowAllDeleteButton, setIsShowAllDeleteButton] = useState(false)
   const [contactItems, setContactItems] = useState(items)
 
-  // console.log(searchBox);
-  // console.log(activeItems);
-  
-  
-  console.log(contactItems);
-  // useEffect(() => {
-  //   console.log(items);
-    
-  //   setContactItems(items)
-    
-  // },[contactItems])
-
   const focusSearchBox = () => {
     searchBox.current?.focus();
   }
