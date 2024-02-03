@@ -3,13 +3,13 @@ import type { Database } from '@/lib/database.types'
 type UserContactType = Database['public']['Tables']['contacts']['Row']
 
 type StateType = {
-  contactData: UserContactType
-  setContactData: (payload: UserContactType) => void
+  contactData: Array<UserContactType> | null
+  setContactData: (payload: Array<UserContactType>) => void
 }
 
 const useContactStore = create<StateType>((set) => ({
   // 初期値
-  contactData: { id: 0, created_at: "",  name: "", email: "", title: "", description: "", contact_date: ""},
+  contactData: null,
   // アップデート
   setContactData: (payload) => set({ contactData: payload }),
 }))
