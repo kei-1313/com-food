@@ -101,7 +101,7 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
           <input 
             type="text"
             ref={searchBox}
-            className="w-full py-2 pl-8 pr-2 rounded bg-lightPurple  focus:border-activePurple focus:border-[2px] focus:outline-none cursor-pointer"
+            className="w-full py-2 pl-8 pr-2 rounded bg-lightPurple  focus:border-activePurple focus:border-[2px] focus:outline-none"
             name="" 
             id=""  />
             <MagnifyingGlassIcon width={22} className="absolute top-[10px] left-2 cursor-pointer" onClick={focusSearchBox}/>
