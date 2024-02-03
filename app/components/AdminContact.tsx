@@ -26,11 +26,13 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
   // console.log(activeItems);
   
   
-  
-  useEffect(() => {
-    setContactItems(items)
+  console.log(contactItems);
+  // useEffect(() => {
+  //   console.log(items);
     
-  },[contactItems])
+  //   setContactItems(items)
+    
+  // },[contactItems])
 
   const focusSearchBox = () => {
     searchBox.current?.focus();
@@ -42,31 +44,61 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
     )
   }
 
+  //全件選択
   const changeAllCheckedStatus = () => {
+    if(contactItems?.length === 0) {
+      return
+    }
+
     setIsAllItemsSelected(!isAllItemsSelected)
     setActiveItems(prev => prev.map(item => !item))
-
   }
-
 
   const showAllDeleteButton = () => {
     setIsShowAllDeleteButton(!isShowAllDeleteButton)
   }
 
+  //全件削除
+  const deleteAllItems = async () => {
+    const handleDeleteAllResult = window.confirm("本当に全件削除してよろしいですか？")
+
+    if(handleDeleteAllResult) {
+      try {
+        const { error } = await supabase
+          .from("contacts")
+          .delete()
+          .neq('id', 0)
+        const { data } = await supabase
+          .from("contacts")
+          .select("*")
+
+        setContactItems(data)
+      } catch (error) {
+        alert(error)
+      }
+    }
+  }
+
   //クリックすると削除するためのアラートがでる、その後はいを押すと削除される
   const handleDelete = async (id: number) => {
     const handleDeleteResult = window.confirm("本当に削除してよろしいですか？")
-    console.log(id);
     
     if(handleDeleteResult) {
-      console.log("削除");
-      const { error } = await supabase
-        .from("contacts")
-        .delete()
-        .eq('id', id)
-    }
+        try {
+          const { error } = await supabase
+            .from("contacts")
+            .delete()
+            .eq('id', id)
 
-    setContactItems(items)
+          const { data } = await supabase
+          .from("contacts")
+          .select("*")
+  
+          setContactItems(data)
+        } catch (error) {
+          alert(error)
+        }
+      }
 
     router.refresh()
   }
@@ -96,11 +128,11 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
           <div className='relative'>
             <div className='ml-4'>
               <button onClick={showAllDeleteButton} className='text-sm rounded  py-3 px-4 text-center  text-activePurple w-[10rem] font-bold border-[2px] border-activePurple'>{contactItems?.length}件を選択中</button>
-              <span onClick={changeAllCheckedStatus} className='text-sm cursor-pointer inline-block ml-8 text-attentionPurple '>全件選択削除</span>
+              <span onClick={changeAllCheckedStatus} className='text-sm cursor-pointer inline-block ml-8 text-attentionPurple '>全件選択解除</span>
             </div>
             {isShowAllDeleteButton &&
               <div className='absolute border text-sm border-gray-300 rounded left-4 mt-1 bg-white z-10'>
-                <button className='py-4 px-4 flex gap-2'><TrashIcon width={20} />コンテンツを削除する</button>
+                <button onClick={deleteAllItems} className='py-4 px-4 flex gap-2'><TrashIcon width={20} />コンテンツを削除する</button>
               </div>
             }
           </div>
