@@ -14,7 +14,7 @@ const LoginPage = async () => {
 
   // 認証している場合、リダイレクト
   if(session) {
-    redirect('/')
+    redirect('/admin/contact/')
   }
 	return <Login/>
 

@@ -34,7 +34,7 @@ const Navigation = ({session, adminUser}: {session: Session | null, adminUser: A
             com-food
           </Link>
 
-          <p>{adminUser?.email}</p>
+          <p></p>
         </div>
       </header>
       }

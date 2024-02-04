@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import UserContactConfirm from '../components/UserContactConfirm';
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import Header from '../components/layouts/Header';
 
 type Schema = z.infer<typeof schema>
 
@@ -34,6 +35,7 @@ const UserContactPage = () => {
 
   return(
     <div>
+      <Header/>
       <FormProvider {...methods}>
         {!isConfirm ? (
           <UserContact />

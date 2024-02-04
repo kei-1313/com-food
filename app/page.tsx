@@ -1,27 +1,18 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import Header from "@/app/components/layouts/Header"
+import GoogleMap from "./components/home/googleMap/GoogleMap"
+import ShopCardList from "./components/shop/shopCardList/ShopCardList"
+import RecommendPost from "./components/home/RecommendPost/RecommendPost"
 
-import type  {Database } from '@/lib/database.types'
-import Sidebar from './components/Sidebar'
 
-const Home = async () => {
-  const supabase = createServerComponentClient<Database>({
-    cookies
-  })
-
-  //セッションの取得
-  const { data: {session} } = await supabase.auth.getSession()
-
+const Home = () => {
   return (
     <div>
-      {session ?
+      <Header/>
       <div>
-        <Sidebar/>
-      </div> :
-      <div>
-        未ログイン
+        <GoogleMap />
+        <RecommendPost />
+        <ShopCardList />
       </div>
-      }
     </div>
   )
 }
