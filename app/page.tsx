@@ -1,11 +1,11 @@
+import Header from "@/app/components/user/Header"
 
 
-const Home = async () => {
+
+const Home = () => {
   return (
     <div>
-      <div>
-        
-      </div>
+      <Header/>
     </div>
   )
 }
