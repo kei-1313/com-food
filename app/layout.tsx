@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Noto_Sans_JP } from 'next/font/google'
 import './globals.css'
-import SupabaseListener from './components/SupabaseListener'
 
 
 const noto = Noto_Sans_JP({
@@ -23,7 +22,6 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={noto.className}>
-        <SupabaseListener/>
         <main>
           {children}
         </main>

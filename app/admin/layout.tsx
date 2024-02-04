@@ -1,14 +1,17 @@
-'use client'
+import Sidebar from "@/app/components/Sidebar"
+import SupabaseListener from "@/app/components/SupabaseListener"
 
-import Sidebar from "../components/Sidebar"
 
 const adminLayout = ({ children }: { children: React.ReactNode })  => {
 	return (
-		<div className="flex">
-      <div>
-        <Sidebar/>
+    <div>
+      <SupabaseListener/>
+      <div className="flex">
+        <div>
+          <Sidebar/>
+        </div>
+        <div>{children}</div>
       </div>
-      <div>{children}</div>
     </div>
 	)
 }
