@@ -9,6 +9,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
 import FormattedDate from './FormattedDate'
 import { useRouter } from 'next/navigation'
+import { log } from 'console'
 type AdminContactType = Database['public']['Tables']['contacts']['Row']
 type AdminContact =  AdminContactType[]
 
@@ -21,11 +22,23 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
   const [isAllItemsSelected, setIsAllItemsSelected] = useState(false)
   const [isShowAllDeleteButton, setIsShowAllDeleteButton] = useState(false)
   const [contactItems, setContactItems] = useState(items)
+  
 
   const focusSearchBox = () => {
     searchBox.current?.focus();
   }
 
+  //検索機能
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 名前、タイトル、お問い合わせ内容でフィルターをかけている
+    const searchedContactItems = items?.filter(item => {
+      if(item.name?.includes(e.target.value) || item.title?.includes(e.target.value) || item.description?.includes(e.target.value)) {
+        return item
+      }
+    }) ?? []
+
+    setContactItems(searchedContactItems)
+  }
   const changeCheckedStatus = (index: Number) => {
     setActiveItems(prev =>
       prev.map((item, itemIndex) => (itemIndex === index ? !item: item))
@@ -61,6 +74,7 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
           .select("*")
 
         setContactItems(data)
+        setIsShowAllDeleteButton(false)
       } catch (error) {
         alert(error)
       }
@@ -101,6 +115,7 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
           <input 
             type="text"
             ref={searchBox}
+            onChange={(e) => handleSearchChange(e)}
             className="w-full py-2 pl-8 pr-2 rounded bg-lightPurple  focus:border-activePurple focus:border-[2px] focus:outline-none"
             name="" 
             id=""  />
@@ -108,9 +123,16 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
         </div>
       </div>
       <div>
-        <div className="pb-11 pt-2 px-4 border-t border-[#f4f4fa]">
-          <p className="text-sm text-noActivePurple">1〜9件目を表示 / 全9件</p>
-        </div>
+        {contactItems && contactItems.length > 0 ? 
+          (<div className="pb-11 pt-2 px-4 border-t border-[#f4f4fa]">
+            <p className="text-sm text-noActivePurple">1〜{contactItems?.length}件目を表示 / 全{contactItems?.length}件</p>
+          </div>):(
+            <div className="pb-11 pt-2 px-4 border-t border-[#f4f4fa]">
+              <p className="text-sm text-noActivePurple">0件目を表示 / 全0件</p>
+            </div>
+          )
+        }
+        
         
         {isAllItemsSelected &&
           <div className='relative'>
@@ -126,57 +148,63 @@ const AdminContact = ({items}: {items: AdminContact | null}) => {
           </div>
         }
 
-        <div className="py-2 px-4 overflow-x-scroll relative w-full">
-          <table className="w-full min-w-[1180px] border-collapse">
-            <thead className="border-b border-[#f4f4fa]">
-              <tr>
-                <th className="py-4 px-6">
-                  <input 
-                    type="checkbox"
-                    className=""
-                    onChange={changeAllCheckedStatus}
-                    name="" 
-                    id=""
-                    ref={allCheckbox}
-                    checked={isAllItemsSelected}
-                  />
-                </th>
-                <th className="text-sm text-attentionPurple font-bold py-4 px-4">ID</th>
-                <th className="text-sm text-attentionPurple font-bold py-4 px-5">日付</th>
-                <th className="text-sm text-attentionPurple font-bold py-4 px-5">名前</th>
-                <th className="text-sm text-attentionPurple font-bold py-4 px-5">メールアドレス</th>
-                <th className="text-sm text-attentionPurple font-bold py-4 px-5">タイトル</th>
-                <th className="text-sm text-attentionPurple font-bold py-4 px-5">お問い合わせ内容</th>
-                <th className="text-sm text-attentionPurple font-bold py-4 px-4"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {contactItems?.map((item, index) => (
-                <tr className={activeItems[index] ? "bg-currentPurple": '' + "border-b border-[#f4f4fa]"} key={item.id}>
-                  <td className="py-4 px-6">
-                    <div>
+        {contactItems && contactItems.length > 0 ?
+          (<div className="py-2 px-4 overflow-x-scroll relative w-full">
+            <table className="w-full min-w-[1180px] border-collapse">
+              <thead className="border-b border-[#f4f4fa]">
+                <tr>
+                  <th className="py-4 px-6">
                     <input 
                       type="checkbox"
                       className=""
-                      onChange={() => changeCheckedStatus(index)}
-                      checked={activeItems[index]}
-                      name=""
+                      onChange={changeAllCheckedStatus}
+                      name="" 
                       id=""
+                      ref={allCheckbox}
+                      checked={isAllItemsSelected}
                     />
-                    </div>
-                  </td>
-                  <td className="text-sm py-4 px-4">{ item.id }</td>
-                  <td className="text-sm py-4 px-5 whitespace-nowrap"><FormattedDate dateString={item.created_at}/></td>
-                  <td className="text-sm py-4 px-5 whitespace-nowrap">{ item.name }</td>
-                  <td className="text-sm py-4 px-5 whitespace-nowrap">{ item.email }</td>
-                  <td className="text-sm py-4 px-5">{ item.title }</td>
-                  <td className="text-sm py-4 px-5">{ item.description }</td>
-                  <td className="text-sm py-4 px-4 cursor-pointer"><TrashIcon width={22} onClick={() => handleDelete(item.id)}/></td>
+                  </th>
+                  <th className="text-sm text-attentionPurple font-bold py-4 px-4">ID</th>
+                  <th className="text-sm text-attentionPurple font-bold py-4 px-5">日付</th>
+                  <th className="text-sm text-attentionPurple font-bold py-4 px-5">名前</th>
+                  <th className="text-sm text-attentionPurple font-bold py-4 px-5">メールアドレス</th>
+                  <th className="text-sm text-attentionPurple font-bold py-4 px-5">タイトル</th>
+                  <th className="text-sm text-attentionPurple font-bold py-4 px-5">お問い合わせ内容</th>
+                  <th className="text-sm text-attentionPurple font-bold py-4 px-4"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {contactItems?.map((item, index) => (
+                  <tr className={activeItems[index] ? "bg-currentPurple": '' + "border-b border-[#f4f4fa]"} key={item.id}>
+                    <td className="py-4 px-6">
+                      <div>
+                      <input 
+                        type="checkbox"
+                        className=""
+                        onChange={() => changeCheckedStatus(index)}
+                        checked={activeItems[index]}
+                        name=""
+                        id=""
+                      />
+                      </div>
+                    </td>
+                    <td className="text-sm py-4 px-4">{ item.id }</td>
+                    <td className="text-sm py-4 px-5 whitespace-nowrap"><FormattedDate dateString={item.created_at}/></td>
+                    <td className="text-sm py-4 px-5 whitespace-nowrap">{ item.name }</td>
+                    <td className="text-sm py-4 px-5 whitespace-nowrap">{ item.email }</td>
+                    <td className="text-sm py-4 px-5">{ item.title }</td>
+                    <td className="text-sm py-4 px-5">{ item.description }</td>
+                    <td className="text-sm py-4 px-4 cursor-pointer"><TrashIcon width={22} onClick={() => handleDelete(item.id)}/></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>) : (
+            <div className="py-20 w-full text-center max-w-[700px]">
+              <h3 className="text-2xl text-attentionPurple font-bold">コンテンツがありません</h3>
+            </div>
+          )
+        }
       </div>
     </div>
 	)
