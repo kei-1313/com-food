@@ -22,7 +22,10 @@ const Sidebar = () => {
 
 	return (
     <div className="flex fixed top-0 left-0 z-50">
-      <div className="w-[60px] bg-blackPurple h-full min-h-screen flex flex-col justify-end fixed top-0 left-0">
+      <div className="w-[60px] bg-blackPurple h-full min-h-screen flex flex-col justify-end fixed top-0 left-0 relative">
+        <Link href="/admin/contact/" className="w-[36px] h-[36px] bg-white rounded top-3 left-0 right-0 m-auto absolute">
+          <span className="text-md text-attentionPurple font-bold text-center flex items-center justify-center h-full">C</span>
+        </Link>
         <Link href="/admin/user/" className="block">
           <div className="w-[36px] mx-auto pb-4 cursor-pointer relative">
             <div className="w-[36px] h-[36px] absolute top-[-36px] left-0 right-0 mx-auto">
