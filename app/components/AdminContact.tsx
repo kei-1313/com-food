@@ -13,7 +13,11 @@ import { log } from 'console'
 type AdminContactType = Database['public']['Tables']['contacts']['Row']
 type AdminContact =  AdminContactType[]
 
-const AdminContact = ({items}: {items: AdminContact | null}) => {
+interface AdminContactProps {
+  items: AdminContact | null
+}
+
+const AdminContact = ({items}: AdminContactProps ) => {
   const router = useRouter()
   const searchBox = useRef<HTMLInputElement>(null)
   const allCheckbox = useRef<HTMLInputElement>(null)
