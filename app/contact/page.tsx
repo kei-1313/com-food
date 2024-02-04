@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import UserContactConfirm from '../components/UserContactConfirm';
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import Header from '../components/user/Header';
+import Header from '../components/layouts/Header';
 
 type Schema = z.infer<typeof schema>
 
