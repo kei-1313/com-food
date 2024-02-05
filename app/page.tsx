@@ -22,7 +22,7 @@ const Home = () => {
       const map = new Map(mapElement!, {
         zoom: 15,
         center: position,
-        mapId: 'DEMO_MAP_ID', // ここにあなたのマップIDを設定
+        mapId: 'MAP_ID', // ここにあなたのマップIDを設定
       });
 
       const marker = new AdvancedMarkerElement({
@@ -36,7 +36,7 @@ const Home = () => {
       service.nearbySearch({
         location: position,
         radius: 1000,  // 検索範囲（メートル）
-        type: 'store'  // 店舗を検索
+        type: 'restaurant'  // 店舗を検索
       }, (results, status) => {
           if (status === PlacesServiceStatus.OK && results) {
             setNearStores(results)
