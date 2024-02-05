@@ -2,7 +2,11 @@
 
 import ShopCard from "../shopCard/ShopCard"
 
-const ShopCardList = () => { 
+interface ShopsProps {
+  shops: google.maps.places.PlaceResult[]
+}
+
+const ShopCardList:React.FC<ShopsProps> = ({shops}) => {
 	return (
 		<div className="max-w-[1200px] mx-auto px-5">
       <h2 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">店舗一覧</h2>
@@ -10,7 +14,9 @@ const ShopCardList = () => {
         <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-orange">本日営業中の店舗</button>
         <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
       </div>
-      <ShopCard />
+      {shops.map((shop, index) => (
+        <ShopCard shop={shop}/>
+      ))}
     </div>
 	)
 }

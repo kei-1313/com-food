@@ -3,20 +3,17 @@
 import Header from "@/app/components/layouts/Header"
 import ShopCardList from "./components/shop/shopCardList/ShopCardList"
 import RecommendPost from "./components/home/RecommendPost/RecommendPost"
-import GoogleMapArea from "./components/home/googleMap/GoogleMapArea"
 
-import {APIProvider, Map, Marker, useMapsLibrary} from '@vis.gl/react-google-maps';
+import {APIProvider} from '@vis.gl/react-google-maps';
 import { useEffect, useState } from "react"
 
 const Home = () => {
   const position = {lat: 35.72295079725532, lng: 139.71215183258244};
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const placesLib = useMapsLibrary('places');
+  const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
 
   useEffect(() => {
     const initMap = async () => {
-      const position = {lat: 35.72295079725532, lng: 139.71215183258244};
       const mapElement = document.getElementById("map")
       //@ts-ignore
       const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
@@ -41,11 +38,10 @@ const Home = () => {
         radius: 1000,  // 検索範囲（メートル）
         type: 'store'  // 店舗を検索
       }, (results, status) => {
-          if (status === PlacesServiceStatus.OK) {
-            console.log(results);
+          if (status === PlacesServiceStatus.OK && results) {
+            setNearStores(results)
           }
       });
-      
     }
     
     if (typeof window !== 'undefined') {
@@ -54,27 +50,23 @@ const Home = () => {
     }
   }, []);
 
+  // console.log(nearStores);
+  
+
   
   return (
     <div>
       <Header/>
       <div>
         <APIProvider apiKey={API_KEY!}>
-          <div className="h-[600px]">
-            {/* <Map center={position} zoom={15}>
-              <Marker position={position} />
-            </Map> */}
-
             <div id="map" className="h-[600px]">
 
             </div>
-          </div>
-          
         </APIProvider>
         
         
         <RecommendPost />
-        <ShopCardList />
+        <ShopCardList shops={nearStores} />
       </div>
     </div>
   )
