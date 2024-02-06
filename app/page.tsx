@@ -33,15 +33,19 @@ const Home = () => {
 
       const service = new PlacesService(map)
 
-      service.nearbySearch({
+      service.textSearch({
+        query: 'ラーメン',  // 店舗を検索
         location: position,
         radius: 1000,  // 検索範囲（メートル）
-        type: 'restaurant'  // 店舗を検索
+        type: "restaurant"
       }, (results, status) => {
           if (status === PlacesServiceStatus.OK && results) {
             setNearStores(results)
           }
       });
+
+  
+      
     }
     
     if (typeof window !== 'undefined') {

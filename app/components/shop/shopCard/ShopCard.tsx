@@ -13,7 +13,7 @@ const ShopCard:React.FC<ShopProps> = ({shop}) => {
   } else {
     shopImage = null
   }
-  console.log(shop);
+    console.log(shop);
   
 	return (
     <>
@@ -40,7 +40,7 @@ const ShopCard:React.FC<ShopProps> = ({shop}) => {
             </div>
             <div className="mb-5">
               <p className="font-bold mb-2">住所</p>
-              <p>{shop.vicinity}</p>
+              <p>{shop.formatted_address}</p>
             </div>
             <div className="mb-5 flex gap-7">
               <div>
