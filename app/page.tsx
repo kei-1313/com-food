@@ -5,12 +5,39 @@ import ShopCardList from "./components/shop/shopCardList/ShopCardList"
 import RecommendPost from "./components/home/RecommendPost/RecommendPost"
 
 import {APIProvider} from '@vis.gl/react-google-maps';
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 const Home = () => {
   const position = {lat: 35.72295079725532, lng: 139.71215183258244};
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
   const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
+  const [tags, setTags] = useState([])
+  const ref = useRef(null)
+
+  const tagsContents = [
+    {
+      name: "ラーメン"
+    },
+    {
+      name: "中華"
+    },
+    {
+      name: "和食"
+    },
+    {
+      name: "洋食"
+    },
+    {
+      name: "カフェ"
+    },
+    {
+      name: "定食"
+    }
+  ]
+
+  const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
+    console.log(e)
+  }
 
   useEffect(() => {
     const initMap = async () => {
@@ -43,9 +70,6 @@ const Home = () => {
             setNearStores(results)
           }
       });
-
-  
-      
     }
     
     if (typeof window !== 'undefined') {
@@ -54,10 +78,6 @@ const Home = () => {
     }
   }, []);
 
-  // console.log(nearStores);
-  
-
-  
   return (
     <div>
       <Header/>
@@ -70,6 +90,16 @@ const Home = () => {
         
         
         <RecommendPost />
+        <div className="px-5 mb-10">
+          <h3 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">タグ</h3>
+          <ul className="grid grid-cols-6 gap-2">
+            {tagsContents?.map((item, index) => (
+              <li className="w-full">
+                <input type="text" value={item.name} className="cursor-pointer py-3 w-full bg-red-500 rounded-full text-center" onClick={(e) => handleTags(e)}/>
+              </li>
+            ))}
+          </ul>
+        </div>
         <ShopCardList shops={nearStores} />
       </div>
     </div>
