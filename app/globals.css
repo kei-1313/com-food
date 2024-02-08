@@ -5,6 +5,7 @@
 @layer base {
   html {
     font-family: "Noto Sans JP", sans-serif;
+    letter-spacing: 0.05em;
   }
 
   body {
@@ -15,11 +16,19 @@
     width: 100%;
   }
 
+  h1,h2,h3,h4,p,span {
+    letter-spacing: 0.05em;
+  }
+
   table,
   td,
   th,
   tr {
     padding: 0;
+  }
+
+  button {
+    letter-spacing: 0.05em;
   }
 }
 
