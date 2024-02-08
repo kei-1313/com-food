@@ -13,7 +13,7 @@ const ShopCard:React.FC<ShopProps> = ({shop}) => {
   } else {
     shopImage = null
   }
-    console.log(shop);
+    // console.log(shop);
   
 	return (
     <>

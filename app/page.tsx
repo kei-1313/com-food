@@ -11,7 +11,7 @@ const Home = () => {
   const position = {lat: 35.72295079725532, lng: 139.71215183258244};
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
   const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
-  const [tags, setTags] = useState([])
+  const [tags, setTags] = useState<String[]>([])
   const ref = useRef(null)
 
   const tagsContents = [
@@ -35,48 +35,61 @@ const Home = () => {
     }
   ]
 
-  const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
-    console.log(e)
+  const initMap = async (query:string = '') => {
+    const mapElement = document.getElementById("map")
+    //@ts-ignore
+    const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+    const { PlacesService, PlacesServiceStatus } = await google.maps.importLibrary("places") as google.maps.PlacesLibrary;
+    const map = new Map(mapElement!, {
+      zoom: 15,
+      center: position,
+      mapId: 'MAP_ID', // ここにあなたのマップIDを設定
+    });
+
+    const marker = new AdvancedMarkerElement({
+      map: map,
+      position: position,
+      title: 'Commude',
+    });
+
+    const service = new PlacesService(map)
+
+    service.textSearch({
+      query: query,  // 店舗を検索
+      location: position,
+      radius: 1000,  // 検索範囲（メートル）
+      type: "restaurant"
+    }, (results, status) => {
+        if (status === PlacesServiceStatus.OK && results) {
+          setNearStores(results)
+        }
+    });
   }
 
   useEffect(() => {
-    const initMap = async () => {
-      const mapElement = document.getElementById("map")
-      //@ts-ignore
-      const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
-      const { PlacesService, PlacesServiceStatus } = await google.maps.importLibrary("places") as google.maps.PlacesLibrary;
-      const map = new Map(mapElement!, {
-        zoom: 15,
-        center: position,
-        mapId: 'MAP_ID', // ここにあなたのマップIDを設定
-      });
-
-      const marker = new AdvancedMarkerElement({
-        map: map,
-        position: position,
-        title: 'Commude',
-      });
-
-      const service = new PlacesService(map)
-
-      service.textSearch({
-        query: 'ラーメン',  // 店舗を検索
-        location: position,
-        radius: 1000,  // 検索範囲（メートル）
-        type: "restaurant"
-      }, (results, status) => {
-          if (status === PlacesServiceStatus.OK && results) {
-            setNearStores(results)
-          }
-      });
-    }
+    const tagQuery = tags.join()
     
     if (typeof window !== 'undefined') {
       // ウィンドウオブジェクトが利用可能な場合のみマップを初期化
-      initMap();
+      initMap(tagQuery);
     }
-  }, []);
+  }, [tags]);
+
+  const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
+    if(e.currentTarget.value !== '') {
+      setTags([...tags, e.currentTarget.value])
+    }
+    // console.log(tags);
+    
+  }
+
+   
+
+
+  
+
+ 
 
   return (
     <div>
@@ -90,7 +103,7 @@ const Home = () => {
         
         
         <RecommendPost />
-        <div className="px-5 mb-10">
+        <div className="max-w-[1200px] mx-auto px-5 mb-10">
           <h3 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">タグ</h3>
           <ul className="grid grid-cols-6 gap-2">
             {tagsContents?.map((item, index) => (
