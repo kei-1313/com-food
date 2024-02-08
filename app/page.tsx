@@ -16,22 +16,28 @@ const Home = () => {
 
   const tagsContents = [
     {
-      name: "ラーメン"
+      name: "ラーメン",
+      isActive: false
     },
     {
-      name: "中華"
+      name: "中華",
+      isActive: false
     },
     {
-      name: "和食"
+      name: "和食",
+      isActive: false
     },
     {
-      name: "洋食"
+      name: "洋食",
+      isActive: false
     },
     {
-      name: "カフェ"
+      name: "カフェ",
+      isActive: false
     },
     {
-      name: "定食"
+      name: "定食",
+      isActive: false
     }
   ]
 
@@ -68,6 +74,8 @@ const Home = () => {
   }
 
   useEffect(() => {
+    console.log(tags);
+    
     const tagQuery = tags.join()
     
     if (typeof window !== 'undefined') {
@@ -77,19 +85,15 @@ const Home = () => {
   }, [tags]);
 
   const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
-    if(e.currentTarget.value !== '') {
-      setTags([...tags, e.currentTarget.value])
+    const tagValue = e.currentTarget.value
+    if(tagValue !== '') {
+      if(tags.includes(tagValue)) {
+        setTags(prev => prev.filter(item => item !== tagValue))
+      } else {
+        setTags([...tags, e.currentTarget.value])
+      }
     }
-    // console.log(tags);
-    
   }
-
-   
-
-
-  
-
- 
 
   return (
     <div>
