@@ -7,6 +7,12 @@ import RecommendPost from "./components/home/RecommendPost/RecommendPost"
 import {APIProvider} from '@vis.gl/react-google-maps';
 import { useEffect, useRef, useState } from "react"
 
+interface TagsContents {
+  name: string,
+  isActive: boolean
+}
+
+
 const Home = () => {
   const position = {lat: 35.72295079725532, lng: 139.71215183258244};
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
@@ -14,7 +20,7 @@ const Home = () => {
   const [tags, setTags] = useState<String[]>([])
   const ref = useRef(null)
 
-  const tagsContents = [
+  const [tagsContents, setTagsContent] = useState<TagsContents[]>([
     {
       name: "ラーメン",
       isActive: false
@@ -39,7 +45,7 @@ const Home = () => {
       name: "定食",
       isActive: false
     }
-  ]
+  ])
 
   const initMap = async (query:string = '') => {
     const mapElement = document.getElementById("map")
@@ -89,8 +95,28 @@ const Home = () => {
     if(tagValue !== '') {
       if(tags.includes(tagValue)) {
         setTags(prev => prev.filter(item => item !== tagValue))
+        setTagsContent(prev => {
+          prev.map(item => {
+            if(item.name === tagValue) {
+              item.isActive = false
+            }
+            return item
+          })
+
+          return prev
+        })
       } else {
         setTags([...tags, e.currentTarget.value])
+        setTagsContent(prev => {
+          prev.map(item => {
+            if(item.name === tagValue) {
+              item.isActive = true
+            }
+            return item
+          })
+
+          return prev
+        })
       }
     }
   }
@@ -112,7 +138,8 @@ const Home = () => {
           <ul className="grid grid-cols-6 gap-2">
             {tagsContents?.map((item, index) => (
               <li className="w-full">
-                <input type="text" value={item.name} className="cursor-pointer py-3 w-full bg-red-500 rounded-full text-center" onClick={(e) => handleTags(e)}/>
+                {item.isActive}
+                <input type="text" value={item.name} className={"cursor-pointer outline-none py-3 w-full border-[2px] border-red-500 rounded-full text-center " + (item.isActive? "bg-white":"bg-red-500")} onClick={(e) => handleTags(e)}/>
               </li>
             ))}
           </ul>
