@@ -8,14 +8,11 @@ import {APIProvider} from '@vis.gl/react-google-maps';
 import { useEffect, useRef, useState } from "react"
 import SelectBranch from "./components/home/SelectBranch/SelectBranch";
 
+//タグリストの型
 interface TagsContents {
   name: string,
   isActive: boolean
 }
-
-//本社、支店の情報型
-
-
 
 const Home = () => {
   // const position = {lat: 35.72295079725532, lng: 139.71215183258244};
@@ -50,13 +47,27 @@ const Home = () => {
     },
   ])
 
+  //本社か支店でどれが選択されているかの状態
+  const [selectedOffice, setSelectedOffice] = useState(
+    {
+      officeName: "東京本社",
+      position: {
+        lat: 35.72295079725532,
+        lng: 139.71215183258244
+      }
+    }
+  )
+
+  //選択されたvalueを取得するためにRefを定義
   const officeRef = useRef<HTMLSelectElement>(null)
+
+  //選択されたvalueを取得し、選択された状態を保持するstateに入れることでその支店の1キロ圏内の店舗を出力している
   const handleChangeOfficeValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selecedOfficeName = e.currentTarget.value
     for (let i = 0; i < offices.length; i++) {
       const officeName = offices[i].officeName
       if(selecedOfficeName === officeName) {
-        initMap(tagQuery, offices[i].position)
+        setSelectedOffice({...offices[i]})
       }
     }
   }
@@ -122,15 +133,15 @@ const Home = () => {
   }
 
   useEffect(() => {
-    console.log(tags);
+    console.log(selectedOffice);
     
     setTagQuery(tags.join())
     
     if (typeof window !== 'undefined') {
       // ウィンドウオブジェクトが利用可能な場合のみマップを初期化
-      initMap(tagQuery, offices[0].position);
+      initMap(tagQuery, selectedOffice.position);
     }
-  }, [tags, tagQuery]);
+  }, [tags, tagQuery, selectedOffice]);
 
   const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
     const tagValue = e.currentTarget.value
