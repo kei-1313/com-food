@@ -14,17 +14,11 @@ interface TagsContents {
 }
 
 //本社、支店の情報型
-interface Office {
-  officeName: string;
-  position: {
-    lat: number;
-    lng: number;
-  };
-}
+
 
 
 const Home = () => {
-  const position = {lat: 35.72295079725532, lng: 139.71215183258244};
+  // const position = {lat: 35.72295079725532, lng: 139.71215183258244};
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
   const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
   const [tags, setTags] = useState<String[]>([])
@@ -83,7 +77,7 @@ const Home = () => {
     }
   ])
 
-  const initMap = async (query:string = '') => {
+  const initMap = async (query:string = '', position:any) => {
     const mapElement = document.getElementById("map")
     //@ts-ignore
     const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
@@ -122,7 +116,7 @@ const Home = () => {
     
     if (typeof window !== 'undefined') {
       // ウィンドウオブジェクトが利用可能な場合のみマップを初期化
-      initMap(tagQuery);
+      initMap(tagQuery, offices[0].position);
     }
   }, [tags]);
 
