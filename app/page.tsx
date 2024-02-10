@@ -22,6 +22,7 @@ const Home = () => {
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
   const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
   const [tags, setTags] = useState<String[]>([])
+  const [tagQuery, setTagQuery] = useState('')
   const ref = useRef(null)
 
   //本社、支店の情報
@@ -48,6 +49,17 @@ const Home = () => {
       }
     },
   ])
+
+  const officeRef = useRef<HTMLSelectElement>(null)
+  const handleChangeOfficeValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selecedOfficeName = e.currentTarget.value
+    for (let i = 0; i < offices.length; i++) {
+      const officeName = offices[i].officeName
+      if(selecedOfficeName === officeName) {
+        initMap(tagQuery, offices[i].position)
+      }
+    }
+  }
   
 
   const [tagsContents, setTagsContent] = useState<TagsContents[]>([
@@ -112,13 +124,13 @@ const Home = () => {
   useEffect(() => {
     console.log(tags);
     
-    const tagQuery = tags.join()
+    setTagQuery(tags.join())
     
     if (typeof window !== 'undefined') {
       // ウィンドウオブジェクトが利用可能な場合のみマップを初期化
       initMap(tagQuery, offices[0].position);
     }
-  }, [tags]);
+  }, [tags, tagQuery]);
 
   const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
     const tagValue = e.currentTarget.value
@@ -161,7 +173,7 @@ const Home = () => {
             </div>
         </APIProvider>
         
-        <SelectBranch offices={offices}/>
+        <SelectBranch offices={offices} officeRef={officeRef} onChange={handleChangeOfficeValue}/>
         <RecommendPost />
         <div className="max-w-[1200px] mx-auto px-5 mb-10">
           <h3 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">タグ</h3>
