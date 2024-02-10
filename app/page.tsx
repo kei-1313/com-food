@@ -8,6 +8,8 @@ import { useEffect, useRef, useState } from "react"
 import SelectBranch from "./components/home/SelectBranch/SelectBranch";
 import RecommendShop from "./components/home/RecommendShop/RecommendShop";
 
+import { getCookies, setCookie, hasCookie, deleteCookie, getCookie } from 'cookies-next';
+
 //タグリストの型
 interface TagsContents {
   name: string,
@@ -178,10 +180,25 @@ const Home = () => {
   //今週のおすすめ機能
   const shuffleRecommendShop = () => {
     const shuffleNum = Math.floor(Math.random() * (nearStores.length + 1));
-    console.log(nearStores[shuffleNum]);
+    console.log();
+    return nearStores[shuffleNum]
   }
 
-  shuffleRecommendShop()
+  const handleCookie = () => {
+    //テキストデータしか扱えないので、JSONに変更
+    const shuffedShop = JSON.stringify(shuffleRecommendShop())
+
+    if(hasCookie('shuffedShop')) {
+      console.log("i have");
+    } else {
+      setCookie('shuffedShop', shuffedShop);
+    }
+  }
+
+  handleCookie()
+
+  
+  
   
 
 
