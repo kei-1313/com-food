@@ -6,10 +6,20 @@ import RecommendPost from "./components/home/RecommendPost/RecommendPost"
 
 import {APIProvider} from '@vis.gl/react-google-maps';
 import { useEffect, useRef, useState } from "react"
+import SelectBranch from "./components/home/SelectBranch/SelectBranch";
 
 interface TagsContents {
   name: string,
   isActive: boolean
+}
+
+//本社、支店の情報型
+interface Office {
+  officeName: string;
+  position: {
+    lat: number;
+    lng: number;
+  };
 }
 
 
@@ -19,6 +29,32 @@ const Home = () => {
   const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
   const [tags, setTags] = useState<String[]>([])
   const ref = useRef(null)
+
+  //本社、支店の情報
+  const [offices, setOffices] = useState([
+    {
+      officeName: "東京本社",
+      position: {
+        lat: 35.72295079725532,
+        lng: 139.71215183258244
+      }
+    },
+    {
+      officeName: "名古屋支店",
+      position: {
+        lat: 35.17365440275725,
+        lng: 136.89874981534123
+      }
+    },
+    {
+      officeName: "札幌支店",
+      position: {
+        lat: 43.072372229883534,
+        lng: 141.3494175181069
+      }
+    },
+  ])
+  
 
   const [tagsContents, setTagsContent] = useState<TagsContents[]>([
     {
@@ -131,7 +167,7 @@ const Home = () => {
             </div>
         </APIProvider>
         
-        
+        <SelectBranch offices={offices}/>
         <RecommendPost />
         <div className="max-w-[1200px] mx-auto px-5 mb-10">
           <h3 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">タグ</h3>
