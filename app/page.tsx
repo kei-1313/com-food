@@ -2,11 +2,11 @@
 
 import Header from "@/app/components/layouts/Header"
 import ShopCardList from "./components/shop/shopCardList/ShopCardList"
-import RecommendPost from "./components/home/RecommendPost/RecommendPost"
 
 import {APIProvider} from '@vis.gl/react-google-maps';
 import { useEffect, useRef, useState } from "react"
 import SelectBranch from "./components/home/SelectBranch/SelectBranch";
+import RecommendShop from "./components/home/RecommendShop/RecommendShop";
 
 //タグリストの型
 interface TagsContents {
@@ -133,13 +133,14 @@ const Home = () => {
   }
 
   useEffect(() => {
-    console.log(selectedOffice);
-    
-    setTagQuery(tags.join())
+    //タグがひとつでもはいっていれば実行
+    if(tags.length > 0) {
+      setTagQuery(tags.join())
+    }
     
     if (typeof window !== 'undefined') {
       // ウィンドウオブジェクトが利用可能な場合のみマップを初期化
-      initMap(tagQuery, selectedOffice.position);
+      initMap(tagQuery, selectedOffice.position)
     }
   }, [tags, tagQuery, selectedOffice]);
 
@@ -174,6 +175,16 @@ const Home = () => {
     }
   }
 
+  //今週のおすすめ機能
+  const shuffleRecommendShop = () => {
+    const shuffleNum = Math.floor(Math.random() * (nearStores.length + 1));
+    console.log(nearStores[shuffleNum]);
+  }
+
+  shuffleRecommendShop()
+  
+
+
   return (
     <div>
       <Header/>
@@ -185,7 +196,7 @@ const Home = () => {
         </APIProvider>
         
         <SelectBranch offices={offices} officeRef={officeRef} onChange={handleChangeOfficeValue}/>
-        <RecommendPost />
+        <RecommendShop />
         <div className="max-w-[1200px] mx-auto px-5 mb-10">
           <h3 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">タグ</h3>
           <ul className="grid grid-cols-6 gap-2">
