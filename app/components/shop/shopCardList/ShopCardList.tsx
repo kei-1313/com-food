@@ -15,7 +15,7 @@ const ShopCardList:React.FC<ShopsProps> = ({shops}) => {
         <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
       </div>
       {shops.map((shop, index) => (
-        <ShopCard shop={shop}/>
+        <ShopCard shop={shop} key={index}/>
       ))}
     </div>
 	)

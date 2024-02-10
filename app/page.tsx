@@ -6,19 +6,72 @@ import RecommendPost from "./components/home/RecommendPost/RecommendPost"
 
 import {APIProvider} from '@vis.gl/react-google-maps';
 import { useEffect, useRef, useState } from "react"
+import SelectBranch from "./components/home/SelectBranch/SelectBranch";
 
+//タグリストの型
 interface TagsContents {
   name: string,
   isActive: boolean
 }
 
-
 const Home = () => {
-  const position = {lat: 35.72295079725532, lng: 139.71215183258244};
+  // const position = {lat: 35.72295079725532, lng: 139.71215183258244};
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
   const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
   const [tags, setTags] = useState<String[]>([])
+  const [tagQuery, setTagQuery] = useState('')
   const ref = useRef(null)
+
+  //本社、支店の情報
+  const [offices, setOffices] = useState([
+    {
+      officeName: "東京本社",
+      position: {
+        lat: 35.72295079725532,
+        lng: 139.71215183258244
+      }
+    },
+    {
+      officeName: "名古屋支店",
+      position: {
+        lat: 35.17365440275725,
+        lng: 136.89874981534123
+      }
+    },
+    {
+      officeName: "札幌支店",
+      position: {
+        lat: 43.072372229883534,
+        lng: 141.3494175181069
+      }
+    },
+  ])
+
+  //本社か支店でどれが選択されているかの状態
+  const [selectedOffice, setSelectedOffice] = useState(
+    {
+      officeName: "東京本社",
+      position: {
+        lat: 35.72295079725532,
+        lng: 139.71215183258244
+      }
+    }
+  )
+
+  //選択されたvalueを取得するためにRefを定義
+  const officeRef = useRef<HTMLSelectElement>(null)
+
+  //選択されたvalueを取得し、選択された状態を保持するstateに入れることでその支店の1キロ圏内の店舗を出力している
+  const handleChangeOfficeValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selecedOfficeName = e.currentTarget.value
+    for (let i = 0; i < offices.length; i++) {
+      const officeName = offices[i].officeName
+      if(selecedOfficeName === officeName) {
+        setSelectedOffice({...offices[i]})
+      }
+    }
+  }
+  
 
   const [tagsContents, setTagsContent] = useState<TagsContents[]>([
     {
@@ -47,7 +100,7 @@ const Home = () => {
     }
   ])
 
-  const initMap = async (query:string = '') => {
+  const initMap = async (query:string = '', position:any) => {
     const mapElement = document.getElementById("map")
     //@ts-ignore
     const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
@@ -80,15 +133,15 @@ const Home = () => {
   }
 
   useEffect(() => {
-    console.log(tags);
+    console.log(selectedOffice);
     
-    const tagQuery = tags.join()
+    setTagQuery(tags.join())
     
     if (typeof window !== 'undefined') {
       // ウィンドウオブジェクトが利用可能な場合のみマップを初期化
-      initMap(tagQuery);
+      initMap(tagQuery, selectedOffice.position);
     }
-  }, [tags]);
+  }, [tags, tagQuery, selectedOffice]);
 
   const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
     const tagValue = e.currentTarget.value
@@ -131,7 +184,7 @@ const Home = () => {
             </div>
         </APIProvider>
         
-        
+        <SelectBranch offices={offices} officeRef={officeRef} onChange={handleChangeOfficeValue}/>
         <RecommendPost />
         <div className="max-w-[1200px] mx-auto px-5 mb-10">
           <h3 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">タグ</h3>
