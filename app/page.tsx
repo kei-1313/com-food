@@ -2,11 +2,13 @@
 
 import Header from "@/app/components/layouts/Header"
 import ShopCardList from "./components/shop/shopCardList/ShopCardList"
-import RecommendPost from "./components/home/RecommendPost/RecommendPost"
 
 import {APIProvider} from '@vis.gl/react-google-maps';
 import { useEffect, useRef, useState } from "react"
 import SelectBranch from "./components/home/SelectBranch/SelectBranch";
+import RecommendShop from "./components/home/RecommendShop/RecommendShop";
+
+import { getCookies, setCookie, hasCookie, deleteCookie, getCookie } from 'cookies-next';
 
 //タグリストの型
 interface TagsContents {
@@ -133,13 +135,14 @@ const Home = () => {
   }
 
   useEffect(() => {
-    console.log(selectedOffice);
-    
-    setTagQuery(tags.join())
+    //タグがひとつでもはいっていれば実行
+    if(tags.length > 0) {
+      setTagQuery(tags.join())
+    }
     
     if (typeof window !== 'undefined') {
       // ウィンドウオブジェクトが利用可能な場合のみマップを初期化
-      initMap(tagQuery, selectedOffice.position);
+      initMap(tagQuery, selectedOffice.position)
     }
   }, [tags, tagQuery, selectedOffice]);
 
@@ -174,6 +177,51 @@ const Home = () => {
     }
   }
 
+  //今週のおすすめ機能
+  let shuffledShop = {}
+  let shuffledShopImage = ''
+  //シャッフルした値を1つ取り出す
+  const shuffleRecommendShop = () => {
+    const shuffleNum = Math.floor(Math.random() * (nearStores.length + 1));
+    // console.log(nearStores[shuffleNum], );
+    return nearStores[shuffleNum]
+  }
+
+  //初回時にcookieに保存、2回目からはcookieからデータを取得する
+  const handleCookie = () => {
+    const shuffleRecommendShopData = shuffleRecommendShop()
+
+    //parseしたものは関数を保持しないため画像は別で保存
+    if(shuffleRecommendShopData?.photos !== undefined) {
+      shuffledShopImage = shuffleRecommendShopData.photos[0].getUrl({'maxWidth':300, 'maxHeight':300})
+    }
+
+    //テキストデータしか扱えないので、JSONに変更
+    const shuffledShopJson = JSON.stringify(shuffleRecommendShopData)
+
+    if(!hasCookie('shuffedShop')) {
+      setCookie('shuffedShop', shuffledShopJson);
+    }
+
+    const shuffledShopfromCookie = getCookie('shuffedShop')
+    if(shuffledShopfromCookie) {
+      try {
+        const parsedData = JSON.parse(shuffledShopfromCookie);
+        shuffledShop = parsedData
+        // setShuffedShop({...parsedData})
+      } catch(error) {
+        console.error(error);
+      }
+    }
+  }
+
+  handleCookie()
+
+  
+  
+  
+
+
   return (
     <div>
       <Header/>
@@ -185,7 +233,7 @@ const Home = () => {
         </APIProvider>
         
         <SelectBranch offices={offices} officeRef={officeRef} onChange={handleChangeOfficeValue}/>
-        <RecommendPost />
+        <RecommendShop shuffledShop={shuffledShop} shuffledShopImage={shuffledShopImage}/>
         <div className="max-w-[1200px] mx-auto px-5 mb-10">
           <h3 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">タグ</h3>
           <ul className="grid grid-cols-6 gap-2">
