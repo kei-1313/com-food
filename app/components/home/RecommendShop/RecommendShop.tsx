@@ -1,3 +1,5 @@
+"use client"
+
 import RecommendShopCard from "./RecommendShopCard";
 
 interface shuffledShopProps {
