@@ -258,12 +258,17 @@ const Home = () => {
         <SelectBranch offices={offices} officeRef={officeRef} onChange={handleChangeOfficeValue}/>
         <RecommendShop shuffledShop={shuffledShop} shuffledShopImage={shuffledShopImage}/>
         <div className="max-w-[1200px] mx-auto px-5 mb-10">
-          <h3 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">タグ</h3>
           <ul className="grid grid-cols-6 gap-2">
             {tagsContents?.map((item, index) => (
               <li className="w-full">
                 {item.isActive}
-                <input type="text" value={item.name} className={"cursor-pointer outline-none py-3 w-full border-[2px] border-red-500 rounded-full text-center " + (item.isActive? "bg-white":"bg-red-500")} onClick={(e) => handleTags(e)}/>
+                <input 
+                  type="text" 
+                  value={item.name}
+                  className={"w-full text-black/70 text-center px-3 py-2 transition-all cursor-pointer hover:border-blue-600/30 border border-gray-200 rounded-[30px] outline-none " + (item.isActive? "bg-blue-600/50":"bg-white")} 
+                  onClick={(e) => handleTags(e)}
+                  readOnly
+                />
               </li>
             ))}
           </ul>
