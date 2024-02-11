@@ -30,16 +30,16 @@ const ShopCard:React.FC<ShopProps> = ({shop}) => {
             )}
           </div>
           <div className="w-[70%] px-5 py-4 max-sm:w-full">
-            <div className="mb-5 flex justify-between">
+            <div className="mb-5 flex justify-between max-sm:block max-sm:mb-3">
               <div className="flex gap-2 items-center">
-                <img className="w-[20px] h-[20px]" src={shop.icon} alt=""/>
+                <img className="w-[20px] h-[20px] max-sm:w-[16px] max-sm:h-[16px]" src={shop.icon} alt=""/>
                 <h3 className="text-lg font-bold">{shop.name}</h3>
               </div>
               <div>
                 {shop.opening_hours?.open_now? (
-                  <span className="text-[#2E8849] block px-3 py-2 font-bold">営業中</span>
+                  <span className="text-[#2E8849] block px-3 py-2 max-sm:px-0 font-bold">営業中</span>
                 ):(
-                  <span className="text-[#D93025] block px-3 py-2 font-bold">営業時間外</span>
+                  <span className="text-[#D93025] block px-3 py-2 max-sm:px-0 font-bold">営業時間外</span>
                 )}
                 
               </div>

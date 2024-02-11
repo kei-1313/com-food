@@ -258,7 +258,7 @@ const Home = () => {
         <SelectBranch offices={offices} officeRef={officeRef} onChange={handleChangeOfficeValue}/>
         <RecommendShop shuffledShop={shuffledShop} shuffledShopImage={shuffledShopImage}/>
         <div className="max-w-[1200px] mx-auto px-5 mb-10">
-          <ul className="grid grid-cols-6 gap-2">
+          <ul className="grid grid-cols-6 gap-2 max-sm:grid-cols-2">
             {tagsContents?.map((item, index) => (
               <li className="w-full">
                 {item.isActive}
@@ -275,7 +275,7 @@ const Home = () => {
         </div>
         <div className="max-w-[1200px] mx-auto px-5">
           <h2 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">店舗一覧</h2>
-          <div className="flex justify-between">
+          <div className="flex justify-between max-sm:block max-sm:mb-7">
             <div className="flex gap-4 mb-5 max-sm:mb-4 max-sm:gap-3">
               <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
               <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
