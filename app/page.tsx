@@ -9,6 +9,7 @@ import SelectBranch from "./components/home/SelectBranch/SelectBranch";
 import RecommendShop from "./components/home/RecommendShop/RecommendShop";
 
 import { getCookies, setCookie, hasCookie, deleteCookie, getCookie } from 'cookies-next';
+import SearchFreeWord from "./components/home/SearchFreeWord/SearchFreeWord";
 
 //タグリストの型
 interface TagsContents {
@@ -134,18 +135,6 @@ const Home = () => {
     });
   }
 
-  useEffect(() => {
-    //タグがひとつでもはいっていれば実行
-    if(tags.length > 0) {
-      setTagQuery(tags.join())
-    }
-    
-    if (typeof window !== 'undefined') {
-      // ウィンドウオブジェクトが利用可能な場合のみマップを初期化
-      initMap(tagQuery, selectedOffice.position)
-    }
-  }, [tags, tagQuery, selectedOffice]);
-
   const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
     const tagValue = e.currentTarget.value
     if(tagValue !== '') {
@@ -215,11 +204,45 @@ const Home = () => {
     }
   }
 
-  handleCookie()
+  useEffect(() => {
+    //タグがひとつでもはいっていれば実行
+    if(tags.length > 0) {
+      setTagQuery(tags.join())
+    }
+    
+    
+      // ウィンドウオブジェクトが利用可能な場合のみマップを初期化
+      initMap(tagQuery, selectedOffice.position)
 
-  
-  
-  
+      //cookieの処理
+      // handleCookie()
+    
+  }, [tags, tagQuery, selectedOffice]);
+
+  ////フリーワード検索の処理
+  const searchFreeBoxRef = useRef<HTMLInputElement>(null)
+
+  const handleSearchFreeWord = (value: string) => {
+    console.log("search");
+    initMap(value, selectedOffice.position)
+  }
+
+  //フリーワード検索でエンターが押された場合の処理
+  const handleInputKeyDown = (e:React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key !== 'Enter') return
+    e.preventDefault();
+    if(e.currentTarget.value) {
+      handleSearchFreeWord(e.currentTarget.value)
+    }
+  }
+
+  const handleSearchFreeWordClickButton = () => {
+    if(searchFreeBoxRef.current?.value) {
+      handleSearchFreeWord(searchFreeBoxRef.current.value)
+    }
+  }
+
+
 
 
   return (
@@ -245,7 +268,17 @@ const Home = () => {
             ))}
           </ul>
         </div>
-        <ShopCardList shops={nearStores} />
+        <div className="max-w-[1200px] mx-auto px-5">
+          <h2 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">店舗一覧</h2>
+          <div className="flex justify-between">
+            <div className="flex gap-4 mb-5 max-sm:mb-4 max-sm:gap-3">
+              <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
+              <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
+            </div>
+            <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/>
+          </div>
+          <ShopCardList shops={nearStores} />
+        </div>
       </div>
     </div>
   )
