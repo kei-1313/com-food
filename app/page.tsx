@@ -219,7 +219,29 @@ const Home = () => {
     
   }, [tags, tagQuery, selectedOffice]);
 
-  
+  ////フリーワード検索の処理
+  const searchFreeBoxRef = useRef<HTMLInputElement>(null)
+
+  const handleSearchFreeWord = (value: string) => {
+    console.log("search");
+    initMap(value, selectedOffice.position)
+  }
+
+  //フリーワード検索でエンターが押された場合の処理
+  const handleInputKeyDown = (e:React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key !== 'Enter') return
+    e.preventDefault();
+    if(e.currentTarget.value) {
+      handleSearchFreeWord(e.currentTarget.value)
+    }
+  }
+
+  const handleSearchFreeWordClickButton = () => {
+    if(searchFreeBoxRef.current?.value) {
+      handleSearchFreeWord(searchFreeBoxRef.current.value)
+    }
+  }
+
 
 
 
@@ -253,7 +275,7 @@ const Home = () => {
               <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
               <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
             </div>
-            <SearchFreeWord/>
+            <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/>
           </div>
           <ShopCardList shops={nearStores} />
         </div>

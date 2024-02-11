@@ -8,7 +8,7 @@ interface shuffledShopProps {
 }
 
 const RecommendShop:React.FC<shuffledShopProps> = ({shuffledShop, shuffledShopImage}) => {
-  console.log(shuffledShop);
+  // console.log(shuffledShop);
   
 	return (
 		<div className="max-w-[1200px] mx-auto px-5 mb-20 mt-20">
