@@ -7,8 +7,6 @@ interface ShopsProps {
 }
 
 const ShopCardList:React.FC<ShopsProps> = ({shops}) => {
-  console.log(shops);
-  
 	return (
 	  <div>
       {shops.length > 0? (
