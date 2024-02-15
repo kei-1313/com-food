@@ -7,27 +7,26 @@ interface ShopProps {
 }
 
 const ShopCard:React.FC<ShopProps> = ({shop}) => {
-  console.log(shop.opening_hours?.open_now);
   
-  let shopImage
-  if(shop?.photos !== undefined) {
-    shopImage = shop.photos[0].getUrl({'maxWidth':300, 'maxHeight':300})
-  } else {
-    shopImage = null
-  }
+  // let shopImage
+  // if(shop?.photos !== undefined) {
+  //   shopImage = shop.photos[0].getUrl({'maxWidth':300, 'maxHeight':300})
+  // } else {
+  //   shopImage = null
+  // }
   
 	return (
     <>
       {shop && 
         <div className="flex justify-between gap-3 mb-4 max-sm:block items-center">
           <div className="w-[30%] relative max-sm:w-full">
-            {shopImage !== null ? (
+            {/* {shopImage !== null ? (
               <div className="w-full h-[200px] object-cover">
                 <img src={shopImage} alt="" className="w-full h-full object-cover rounded-[20px]"/>
               </div>
             ): (
-              <Image src="/icon_person.svg" alt="avatar" width={200} height={200}/>
-            )}
+              <Image src="/icon_person.svg" className="w-full h-full object-cover rounded-[20px]" alt="avatar" width={200} height={200}/>
+            )} */}
           </div>
           <div className="w-[70%] px-5 py-4 max-sm:w-full">
             <div className="mb-5 flex justify-between max-sm:block max-sm:mb-3">
@@ -36,12 +35,12 @@ const ShopCard:React.FC<ShopProps> = ({shop}) => {
                 <h3 className="text-lg font-bold">{shop.name}</h3>
               </div>
               <div>
-                {shop.opening_hours?.open_now? (
+                {/*  (
                   <span className="text-[#2E8849] block px-3 py-2 max-sm:px-0 font-bold">営業中</span>
                 ):(
                   <span className="text-[#D93025] block px-3 py-2 max-sm:px-0 font-bold">営業時間外</span>
-                )}
-                
+                )} */}
+                <span className="text-[#2E8849] block px-3 py-2 max-sm:px-0 font-bold">営業中</span>
               </div>
             </div>
             <div className="mb-5">
