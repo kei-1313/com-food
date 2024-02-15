@@ -1,17 +1,15 @@
 "use client"
 
-import { useEffect } from "react"
+import Header from "@/app/components/layouts/Header"
+import ShopCardList from "./components/shop/shopCardList/ShopCardList"
 
-// import Header from "@/app/components/layouts/Header"
-// import ShopCardList from "./components/shop/shopCardList/ShopCardList"
+import {APIProvider} from '@vis.gl/react-google-maps';
+import { useEffect, useRef, useState } from "react"
+import SelectBranch from "./components/home/SelectBranch/SelectBranch";
+import RecommendShop from "./components/home/RecommendShop/RecommendShop";
 
-// import {APIProvider} from '@vis.gl/react-google-maps';
-// import { useEffect, useRef, useState } from "react"
-// import SelectBranch from "./components/home/SelectBranch/SelectBranch";
-// import RecommendShop from "./components/home/RecommendShop/RecommendShop";
-
-// import { getCookies, setCookie, hasCookie, deleteCookie, getCookie } from 'cookies-next';
-// import SearchFreeWord from "./components/home/SearchFreeWord/SearchFreeWord";
+import { getCookies, setCookie, hasCookie, deleteCookie, getCookie } from 'cookies-next';
+import SearchFreeWord from "./components/home/SearchFreeWord/SearchFreeWord";
 
 // //タグリストの型
 // interface TagsContents {
@@ -304,25 +302,45 @@ import { useEffect } from "react"
 
 
 const Home = () => {
-  // console.log(query);
+  const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
   
-
   const callGoogleMapApi = async () => {
     const params = {query : "ラーメン"};
     const query = new URLSearchParams(params);
     const res = await fetch(`/api/shop?${query}`)
     const shops = await res.json()
-    console.log(shops);
+    console.log(shops.results);
+    setNearStores([...shops.results])
   }
 
   useEffect(() => {
     callGoogleMapApi()
   },[])
 
-  return(
-    <div>
-      <h1 className="text-black">テスト</h1>
-    </div>
-  )
+  return (
+      <div>
+        <Header/>
+        <div>
+          <div className="max-w-[1200px] mx-auto px-5">
+            <h2 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">店舗一覧</h2>
+            <div className="flex justify-between max-sm:block max-sm:mb-7">
+              <div className="flex gap-4 mb-5 max-sm:mb-4 max-sm:gap-3">
+                <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
+                <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
+              </div>
+              {/* <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/> */}
+            </div>
+            {nearStores.length > 0 ? (
+              <ShopCardList shops={nearStores} />
+            ):(
+              <div>
+                なにもないです
+              </div>
+            )}
+            
+          </div>
+        </div>
+      </div>
+    )
 }
 export default Home
