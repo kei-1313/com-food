@@ -302,19 +302,32 @@ import SearchFreeWord from "./components/home/SearchFreeWord/SearchFreeWord";
 
 
 const Home = () => {
-  const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
+  const [nearShops, setNearShops] = useState<google.maps.places.PlaceResult[]>([])
+  const [nearShopImages, setNearShopImages] = useState<string[]>([])
   
-  const callGoogleMapApi = async () => {
+  const getNearShops = async () => {
     const params = {query : "ラーメン"};
     const query = new URLSearchParams(params);
     const res = await fetch(`/api/shop?${query}`)
     const shops = await res.json()
-    console.log(shops.results);
-    setNearStores([...shops.results])
+    setNearShops([...shops.results])
+  }
+
+  const getNearShopsImage = async (photore_ference:string) => {
+    const params = {photoreference : photore_ference}
+    // console.log(params);
+    
+    const query = new URLSearchParams(params);
+    const res = await fetch(`/api/shop/photo?${query}`)
+    const shopImageBlob = await res.blob()
+    const shopImage = URL.createObjectURL(shopImageBlob)
+    console.log(shopImage);
+    
+    // setNearShopImages([...nearShopImages, shopImage])
   }
 
   useEffect(() => {
-    callGoogleMapApi()
+    getNearShops()
   },[])
 
   return (
@@ -330,8 +343,8 @@ const Home = () => {
               </div>
               {/* <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/> */}
             </div>
-            {nearStores.length > 0 ? (
-              <ShopCardList shops={nearStores} />
+            {nearShops.length > 0 ? (
+              <ShopCardList shops={nearShops}/>
             ):(
               <div>
                 なにもないです

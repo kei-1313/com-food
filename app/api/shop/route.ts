@@ -1,10 +1,10 @@
 import { NextResponse, NextRequest } from 'next/server'
 
 export async function GET(req:NextRequest){
-  console.log(req);
+  // console.log(req);
   const { searchParams } = new URL(req.url)
   const queryText = searchParams.get('query')
-  console.log(queryText);
+  // console.log(queryText);
   // const lat = req.nextUrl.searchParams.get('lat')
   // const lng = req.nextUrl.searchParams.get('lng')
   const query = "ラーメン"
@@ -19,7 +19,7 @@ export async function GET(req:NextRequest){
   try {
     const res = await fetch(url);
     const data = await res.json();
-    console.log(data.photos);
+    // console.log(JSON.stringify(data.results[0], null, 4));
     
     return NextResponse.json(data)
   } catch (error) {

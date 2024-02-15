@@ -7,24 +7,19 @@ interface ShopProps {
 }
 
 const ShopCard:React.FC<ShopProps> = ({shop}) => {
-  
-  // let shopImage
-  // if(shop?.photos !== undefined) {
-  //   shopImage = shop.photos[0].getUrl({'maxWidth':300, 'maxHeight':300})
-  // } else {
-  //   shopImage = null
-  // }
+  const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
+  //@ts-ignore
+  const photo_reference = shop!.photos![0].photo_reference
   
 	return (
     <>
       {shop && 
         <div className="flex justify-between gap-3 mb-4 max-sm:block items-center">
           <div className="w-[30%] relative max-sm:w-full">
-            {/* {shopImage !== null ? (
               <div className="w-full h-[200px] object-cover">
-                <img src={shopImage} alt="" className="w-full h-full object-cover rounded-[20px]"/>
+                <img src={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo_reference}&key=${API_KEY}`} alt="" className="w-full h-full object-cover rounded-[20px]"/>
               </div>
-            ): (
+            {/* ): (
               <Image src="/icon_person.svg" className="w-full h-full object-cover rounded-[20px]" alt="avatar" width={200} height={200}/>
             )} */}
           </div>
