@@ -306,6 +306,11 @@ interface OfficePostion {
   lng: string;
 }
 
+interface TagsContents {
+  name: string,
+  isActive: boolean
+}
+
 
 const Home = () => {
   const [nearShops, setNearShops] = useState<google.maps.places.PlaceResult[]>([])
@@ -335,6 +340,35 @@ const Home = () => {
       }
     },
   ])
+
+  //タグ
+  const [tagsContents, setTagsContent] = useState<TagsContents[]>([
+    {
+      name: "ラーメン",
+      isActive: false
+    },
+    {
+      name: "中華",
+      isActive: false
+    },
+    {
+      name: "和食",
+      isActive: false
+    },
+    {
+      name: "洋食",
+      isActive: false
+    },
+    {
+      name: "カフェ",
+      isActive: false
+    },
+    {
+      name: "定食",
+      isActive: false
+    }
+  ])
+  const [tags, setTags] = useState<String[]>([])
   
   const getNearShops = async (
     query:string = "", 
@@ -351,34 +385,81 @@ const Home = () => {
     setNearShops([...shops.results])
   }
 
-  const getNearShopsImage = async (photore_ference:string) => {
-    const params = {photoreference : photore_ference}
-    // console.log(params);
+  // const getNearShopsImage = async (photore_ference:string) => {
+  //   const params = {photoreference : photore_ference}
+  //   // console.log(params);
     
-    const query = new URLSearchParams(params);
-    const res = await fetch(`/api/shop/photo?${query}`)
-    const shopImageBlob = await res.blob()
-    const shopImage = URL.createObjectURL(shopImageBlob)
-    console.log(shopImage);
+  //   const query = new URLSearchParams(params);
+  //   const res = await fetch(`/api/shop/photo?${query}`)
+  //   const shopImageBlob = await res.blob()
+  //   const shopImage = URL.createObjectURL(shopImageBlob)
+  //   console.log(shopImage);
     
-    // setNearShopImages([...nearShopImages, shopImage])
+  //   // setNearShopImages([...nearShopImages, shopImage])
+  // }
+
+  const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
+    const tagValue = e.currentTarget.value
+    if(tagValue !== '') {
+      if(tags.includes(tagValue)) {
+        setTags(prev => prev.filter(item => item !== tagValue))
+        setTagsContent(prev => {
+          return prev.map(item => {
+            if(item.name === tagValue) {
+              item.isActive = false
+            }
+            return item
+          })
+        })
+      } else {
+        setTags([...tags, e.currentTarget.value])
+        setTagsContent(prev => {
+          return prev.map(item => {
+            if(item.name === tagValue) {
+              item.isActive = true
+            }
+            return item
+          })
+        })
+      }
+    }
   }
 
   useEffect(() => {
     getNearShops()
   },[])
 
+  useEffect(() => {
+    console.log(tags);
+  },[tags,tagsContents])
+
   return (
       <div>
         <Header/>
         <div>
+          <div className="max-w-[1200px] mx-auto px-5 mb-10 mt-10">
+            <ul className="grid grid-cols-6 gap-2 max-sm:grid-cols-2">
+              {tagsContents?.map((item, index) => (
+                <li className="w-full" key={index}>
+                  {item.isActive}
+                  <input 
+                    type="text" 
+                    value={item.name}
+                    className={"w-full text-[#1B72E8] text-center px-3 py-2 transition-all cursor-pointer hover:border-blue-600/30 border border-gray-200 rounded-[30px] outline-none " + (item.isActive? "bg-blue-600/30":"bg-white")} 
+                    onClick={(e) => handleTags(e)}
+                    readOnly
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="max-w-[1200px] mx-auto px-5">
             <h2 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">店舗一覧</h2>
             <div className="flex justify-between max-sm:block max-sm:mb-7">
-              <div className="flex gap-4 mb-5 max-sm:mb-4 max-sm:gap-3">
+              {/* <div className="flex gap-4 mb-5 max-sm:mb-4 max-sm:gap-3">
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
-              </div>
+              </div> */}
               {/* <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/> */}
             </div>
             {nearShops.length > 0 ? (
