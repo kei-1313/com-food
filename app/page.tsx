@@ -301,14 +301,52 @@ import SearchFreeWord from "./components/home/SearchFreeWord/SearchFreeWord";
 // }
 
 
+interface OfficePostion {
+  lat: string;
+  lng: string;
+}
+
+
 const Home = () => {
   const [nearShops, setNearShops] = useState<google.maps.places.PlaceResult[]>([])
   const [nearShopImages, setNearShopImages] = useState<string[]>([])
+
+  // 本社、支店の情報
+  const [offices, setOffices] = useState([
+    {
+      officeName: "東京本社",
+      position: {
+        lat: "35.72295079725532",
+        lng: "139.71215183258244"
+      }
+    },
+    {
+      officeName: "名古屋支店",
+      position: {
+        lat: "35.17365440275725",
+        lng: "136.89874981534123"
+      }
+    },
+    {
+      officeName: "札幌支店",
+      position: {
+        lat: "43.072372229883534",
+        lng: "141.3494175181069"
+      }
+    },
+  ])
   
-  const getNearShops = async () => {
-    const params = {query : "ラーメン"};
-    const query = new URLSearchParams(params);
-    const res = await fetch(`/api/shop?${query}`)
+  const getNearShops = async (
+    query:string = "", 
+    position:OfficePostion = {
+      lat: "35.72295079725532",
+      lng: "139.71215183258244"
+    }
+  ) => {
+    const location = position.lat + "%2C" + position.lng
+    const params = {query : query, location : location };
+    const queryPamrams = new URLSearchParams(params);
+    const res = await fetch(`/api/shop?${queryPamrams}`)
     const shops = await res.json()
     setNearShops([...shops.results])
   }

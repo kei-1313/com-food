@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from 'next/server'
 export async function GET(req:NextRequest){
   const { searchParams } = new URL(req.url)
   const query = searchParams.get('query')
-  const location = "43.072372229883534%2C141.3494175181069"
+  const location = searchParams.get('location')
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
   const radius = 1000; // 検索範囲（メートル）
   const type = "restaurant"; // 検索タイプ
