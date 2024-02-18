@@ -430,7 +430,9 @@ const Home = () => {
   },[])
 
   useEffect(() => {
-    console.log(tags);
+    const tagQuery = tags.join(",")
+    getNearShops(tagQuery)
+    
   },[tags,tagsContents])
 
   return (
