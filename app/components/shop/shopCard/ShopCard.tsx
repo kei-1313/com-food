@@ -9,7 +9,7 @@ interface ShopProps {
 const ShopCard:React.FC<ShopProps> = ({shop}) => {
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
   //@ts-ignore
-  const photo_reference = shop!.photos![0].photo_reference
+  const photo_reference = shop.photos[0].photo_reference
   
 	return (
     <>

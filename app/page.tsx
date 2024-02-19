@@ -11,97 +11,9 @@ import RecommendShop from "./components/home/RecommendShop/RecommendShop";
 import { getCookies, setCookie, hasCookie, deleteCookie, getCookie } from 'cookies-next';
 import SearchFreeWord from "./components/home/SearchFreeWord/SearchFreeWord";
 
-// //タグリストの型
-// interface TagsContents {
-//   name: string,
-//   isActive: boolean
-// }
-
 // const Home = () => {
-//   // const position = {lat: 35.72295079725532, lng: 139.71215183258244};
-//   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
-//   const [nearStores, setNearStores] = useState<google.maps.places.PlaceResult[]>([])
-//   const [tags, setTags] = useState<String[]>([])
-//   const [tagQuery, setTagQuery] = useState('')
 //   const ref = useRef(null)
-
-//   //本社、支店の情報
-//   const [offices, setOffices] = useState([
-//     {
-//       officeName: "東京本社",
-//       position: {
-//         lat: 35.72295079725532,
-//         lng: 139.71215183258244
-//       }
-//     },
-//     {
-//       officeName: "名古屋支店",
-//       position: {
-//         lat: 35.17365440275725,
-//         lng: 136.89874981534123
-//       }
-//     },
-//     {
-//       officeName: "札幌支店",
-//       position: {
-//         lat: 43.072372229883534,
-//         lng: 141.3494175181069
-//       }
-//     },
-//   ])
-
-//   //本社か支店でどれが選択されているかの状態
-//   const [selectedOffice, setSelectedOffice] = useState(
-//     {
-//       officeName: "東京本社",
-//       position: {
-//         lat: 35.72295079725532,
-//         lng: 139.71215183258244
-//       }
-//     }
-//   )
-
-//   //選択されたvalueを取得するためにRefを定義
-//   const officeRef = useRef<HTMLSelectElement>(null)
-
-//   //選択されたvalueを取得し、選択された状態を保持するstateに入れることでその支店の1キロ圏内の店舗を出力している
-//   const handleChangeOfficeValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
-//     const selecedOfficeName = e.currentTarget.value
-//     for (let i = 0; i < offices.length; i++) {
-//       const officeName = offices[i].officeName
-//       if(selecedOfficeName === officeName) {
-//         setSelectedOffice({...offices[i]})
-//       }
-//     }
-//   }
   
-
-//   const [tagsContents, setTagsContent] = useState<TagsContents[]>([
-//     {
-//       name: "ラーメン",
-//       isActive: false
-//     },
-//     {
-//       name: "中華",
-//       isActive: false
-//     },
-//     {
-//       name: "和食",
-//       isActive: false
-//     },
-//     {
-//       name: "洋食",
-//       isActive: false
-//     },
-//     {
-//       name: "カフェ",
-//       isActive: false
-//     },
-//     {
-//       name: "定食",
-//       isActive: false
-//     }
-//   ])
 
 //   const initMap = async (query:string = '', position:any) => {
 //     const mapElement = document.getElementById("map")
@@ -133,37 +45,6 @@ import SearchFreeWord from "./components/home/SearchFreeWord/SearchFreeWord";
 //           setNearStores(results)
 //         }
 //     });
-//   }
-
-//   const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
-//     const tagValue = e.currentTarget.value
-//     if(tagValue !== '') {
-//       if(tags.includes(tagValue)) {
-//         setTags(prev => prev.filter(item => item !== tagValue))
-//         setTagsContent(prev => {
-//           prev.map(item => {
-//             if(item.name === tagValue) {
-//               item.isActive = false
-//             }
-//             return item
-//           })
-
-//           return prev
-//         })
-//       } else {
-//         setTags([...tags, e.currentTarget.value])
-//         setTagsContent(prev => {
-//           prev.map(item => {
-//             if(item.name === tagValue) {
-//               item.isActive = true
-//             }
-//             return item
-//           })
-
-//           return prev
-//         })
-//       }
-//     }
 //   }
 
 //   //今週のおすすめ機能
@@ -314,7 +195,6 @@ interface TagsContents {
 
 const Home = () => {
   const [nearShops, setNearShops] = useState<google.maps.places.PlaceResult[]>([])
-  const [nearShopImages, setNearShopImages] = useState<string[]>([])
 
   // 本社、支店の情報
   const [offices, setOffices] = useState([
@@ -340,6 +220,31 @@ const Home = () => {
       }
     },
   ])
+
+  //本社か支店でどれが選択されているかの状態
+  const [selectedOffice, setSelectedOffice] = useState(
+    {
+      officeName: "東京本社",
+      position: {
+        lat: "35.72295079725532",
+        lng: "139.71215183258244"
+      }
+    }
+  )
+
+  //選択されたvalueを取得するためにRefを定義
+  const officeRef = useRef<HTMLSelectElement>(null)
+
+  //選択されたvalueを取得し、選択された状態を保持するstateに入れることでその支店の1キロ圏内の店舗を出力している
+  const handleChangeOfficeValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selecedOfficeName = e.currentTarget.value
+    for (let i = 0; i < offices.length; i++) {
+      const officeName = offices[i].officeName
+      if(selecedOfficeName === officeName) {
+        setSelectedOffice({...offices[i]})
+      }
+    }
+  }
 
   //タグ
   const [tagsContents, setTagsContent] = useState<TagsContents[]>([
@@ -425,20 +330,52 @@ const Home = () => {
     }
   }
 
+  const handleSearchFreeWord = (value: string) => {
+    console.log("テスト");
+    
+    getNearShops(value, selectedOffice.position)
+  }
+
+
+   ////フリーワード検索の処理
+  const searchFreeBoxRef = useRef<HTMLInputElement>(null)
+
+  //エンターが押された場合の処理
+  const handleInputKeyDown = (e:React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key !== 'Enter') return
+    e.preventDefault();
+    if(e.currentTarget.value) {
+      handleSearchFreeWord(e.currentTarget.value)
+    }
+  }
+
+  //クリックされたとき
+  const handleSearchFreeWordClickButton = () => {
+    if(searchFreeBoxRef.current?.value) {
+      handleSearchFreeWord(searchFreeBoxRef.current.value)
+    }
+  }
+
   useEffect(() => {
     getNearShops()
   },[])
 
   useEffect(() => {
     const tagQuery = tags.join(",")
-    getNearShops(tagQuery)
+    getNearShops(tagQuery, selectedOffice.position)
     
-  },[tags,tagsContents])
+  },[tags,tagsContents,selectedOffice])
+
+  useEffect(() => {
+
+  },[])
 
   return (
       <div>
         <Header/>
         <div>
+
+          <SelectBranch offices={offices} officeRef={officeRef} onChange={handleChangeOfficeValue}/>
           <div className="max-w-[1200px] mx-auto px-5 mb-10 mt-10">
             <ul className="grid grid-cols-6 gap-2 max-sm:grid-cols-2">
               {tagsContents?.map((item, index) => (
@@ -462,7 +399,7 @@ const Home = () => {
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
               </div> */}
-              {/* <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/> */}
+              <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/>
             </div>
             {nearShops.length > 0 ? (
               <ShopCardList shops={nearShops}/>

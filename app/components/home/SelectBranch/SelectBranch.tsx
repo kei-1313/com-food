@@ -8,8 +8,8 @@ import { RefObject } from "react";
 interface Office {
   officeName: string;
   position: {
-    lat: number;
-    lng: number;
+    lat: string;
+    lng: string;
   };
 }
 
