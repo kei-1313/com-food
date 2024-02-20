@@ -275,6 +275,7 @@ const Home = () => {
   ])
   const [tags, setTags] = useState<String[]>([])
   
+  //1キロ圏内の20店舗を取得する
   const getNearShops = async (
     query:string = "", 
     position:OfficePostion = {
@@ -288,6 +289,7 @@ const Home = () => {
     const res = await fetch(`/api/shop?${queryPamrams}`)
     const shops = await res.json()
     setNearShops([...shops.results])
+    return shops.results
   }
 
   // const getNearShopsImage = async (photore_ference:string) => {
@@ -331,7 +333,7 @@ const Home = () => {
   }
 
   const handleSearchFreeWord = (value: string) => {
-    console.log("テスト");
+    
     
     getNearShops(value, selectedOffice.position)
   }
@@ -356,13 +358,52 @@ const Home = () => {
     }
   }
 
+  //今週のおすすめ機能
+  const [shuffledShop, setShuffledShop] = useState<google.maps.places.PlaceResult>({})
+
+
+//   //初回時にcookieに保存、2回目からはcookieからデータを取得する
+  const handleCookie = (nearShopsData: google.maps.places.PlaceResult[]) => {
+    const shuffleNum = Math.floor(Math.random() * (nearShopsData.length + 1));
+    
+    const shuffleRecommendShopData = nearShopsData[shuffleNum]
+    
+    if(!shuffleRecommendShopData) return
+
+    //cookieがセットされていない場合
+    if(!hasCookie('shuffedShop')) {
+      const shuffledShopJson = JSON.stringify(shuffleRecommendShopData)
+      setCookie('shuffedShop', shuffledShopJson);
+    } else {
+      const shuffledShopfromCookie = getCookie('shuffedShop')
+        try {
+          if(shuffledShopfromCookie) {
+            const shuffledShopParsedData = JSON.parse(shuffledShopfromCookie)
+            setShuffledShop({...shuffledShopParsedData})
+          } else {
+            throw new Error("値が正しく取得できませんでした")
+          }
+        } catch(error) {
+          console.error(error);
+        }
+    }
+  }
+
   useEffect(() => {
-    getNearShops()
+    const initFunc = async () => {
+      const nearShopsData = await getNearShops()
+      // console.log(nearShopsData);
+      
+      handleCookie(nearShopsData)
+      // console.log(shuffledShop);
+    };
+    
+    initFunc()
   },[])
 
   useEffect(() => {
-    const tagQuery = tags.join(",")
-    getNearShops(tagQuery, selectedOffice.position)
+    // const tagQuery = tags.join(",")
+    // getNearShops(tagQuery, selectedOffice.position)
     
   },[tags,tagsContents,selectedOffice])
 
@@ -376,7 +417,12 @@ const Home = () => {
         <div>
 
           <SelectBranch offices={offices} officeRef={officeRef} onChange={handleChangeOfficeValue}/>
+          <RecommendShop shuffledShop={shuffledShop} />
           <div className="max-w-[1200px] mx-auto px-5 mb-10 mt-10">
+            
+          </div>
+          <div className="max-w-[1200px] mx-auto px-5">
+            <h2 className="text-2xl font-bold mb-8 pl-5 max-sm:pl-0 max-sm:mb-4">店舗一覧</h2>
             <ul className="grid grid-cols-6 gap-2 max-sm:grid-cols-2">
               {tagsContents?.map((item, index) => (
                 <li className="w-full" key={index}>
@@ -391,10 +437,7 @@ const Home = () => {
                 </li>
               ))}
             </ul>
-          </div>
-          <div className="max-w-[1200px] mx-auto px-5">
-            <h2 className="text-2xl font-bold mb-6 pl-5 max-sm:pl-0 max-sm:mb-4">店舗一覧</h2>
-            <div className="flex justify-between max-sm:block max-sm:mb-7">
+            <div className="flex justify-end my-10 max-sm:block max-sm:mb-7">
               {/* <div className="flex gap-4 mb-5 max-sm:mb-4 max-sm:gap-3">
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>

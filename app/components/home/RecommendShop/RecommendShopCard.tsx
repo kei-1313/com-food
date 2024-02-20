@@ -1,33 +1,40 @@
 "use client"
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 interface ShopProps {
-  shuffledShop: google.maps.places.PlaceResult;
-  shuffledShopImage:string
+  shuffledShop: google.maps.places.PlaceResult
 }
 
-const RecommendShopCard:React.FC<ShopProps> = ({shuffledShop, shuffledShopImage}) => {
+const ShopCard:React.FC<ShopProps> = ({shuffledShop}) => {
+  const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
+  //@ts-ignore
+  const photo_reference = shuffledShop && Array.isArray(shuffledShop.photos) ? shuffledShop.photos[0].photo_reference : ""
+  console.log(shuffledShop);
   
 	return (
     <>
       {shuffledShop && 
         <div className="flex justify-between gap-3 mb-4 max-sm:block items-center">
           <div className="w-[30%] relative max-sm:w-full">
-            {shuffledShopImage !== null ? (
+            {photo_reference && 
               <div className="w-full h-[200px] object-cover">
-                <img src={shuffledShopImage} className="w-full h-full object-cover rounded-[20px]" alt=""/>
+                <img src={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo_reference}&key=${API_KEY}`} alt="" className="w-full h-full object-cover rounded-[20px]"/>
               </div>
-            ): (
-              <Image src="/icon_person.svg" alt="avatar" className="w-full h-full object-cover rounded-[20px]" width={200} height={200}/>
-            )}
+            }
           </div>
           <div className="w-[70%] px-5 py-4 max-sm:w-full">
             <div className="mb-5 flex justify-between max-sm:block max-sm:mb-3">
               <div className="flex gap-2 items-center">
-                <img className="w-[20px] h-[20px]" src={shuffledShop.icon} alt=""/>
+                <img className="w-[20px] h-[20px] max-sm:w-[16px] max-sm:h-[16px]" src={shuffledShop.icon} alt=""/>
                 <h3 className="text-lg font-bold">{shuffledShop.name}</h3>
               </div>
               <div>
+                {/*  (
+                  <span className="text-[#2E8849] block px-3 py-2 max-sm:px-0 font-bold">営業中</span>
+                ):(
+                  <span className="text-[#D93025] block px-3 py-2 max-sm:px-0 font-bold">営業時間外</span>
+                )} */}
                 <span className="text-[#2E8849] block px-3 py-2 max-sm:px-0 font-bold">営業中</span>
               </div>
             </div>
@@ -60,5 +67,5 @@ const RecommendShopCard:React.FC<ShopProps> = ({shuffledShop, shuffledShopImage}
 	)
 }
 
-export default RecommendShopCard
+export default ShopCard
 
