@@ -10,7 +10,6 @@ const ShopCard:React.FC<ShopProps> = ({shuffledShop}) => {
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
   //@ts-ignore
   const photo_reference = shuffledShop && Array.isArray(shuffledShop.photos) ? shuffledShop.photos[0].photo_reference : ""
-  console.log(shuffledShop);
   
 	return (
     <>
