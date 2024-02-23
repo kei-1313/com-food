@@ -389,27 +389,36 @@ const Home = () => {
     }
   }
 
+  //評価順にソート
+  const handleSortByRating = () => {
+    const newNearShops = [...nearShops]
+    // console.log(newNearShops);
+    
+    const newSortNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
+      if(b.rating && a.rating) {
+        return b.rating - a.rating
+      }
+      return 0;
+    })
+    
+    setNearShops([...newSortNearShops])
+  }
+
   useEffect(() => {
     const initFunc = async () => {
       const nearShopsData = await getNearShops()
-      // console.log(nearShopsData);
       
       handleCookie(nearShopsData)
-      // console.log(shuffledShop);
     };
     
     initFunc()
   },[])
 
   useEffect(() => {
-    // const tagQuery = tags.join(",")
-    // getNearShops(tagQuery, selectedOffice.position)
+    const tagQuery = tags.join(",")
+    getNearShops(tagQuery, selectedOffice.position)
     
   },[tags,tagsContents,selectedOffice])
-
-  useEffect(() => {
-
-  },[])
 
   return (
       <div>
@@ -437,11 +446,14 @@ const Home = () => {
                 </li>
               ))}
             </ul>
-            <div className="flex justify-end my-10 max-sm:block max-sm:mb-7">
+            <div className="flex justify-between my-10 max-sm:block max-sm:mb-7">
               {/* <div className="flex gap-4 mb-5 max-sm:mb-4 max-sm:gap-3">
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
               </div> */}
+              <div>
+                <span onClick={handleSortByRating} className="text-black/70 cursor-pointer">評価順</span>
+              </div>
               <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/>
             </div>
             {nearShops.length > 0 ? (
