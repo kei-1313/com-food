@@ -395,25 +395,46 @@ const Home = () => {
 
   //評価順にソート
   const [isRating, setIsRating] = useState(false)
-  const [beforeSortNearShops, setBeforeSortNearShops] = useState<google.maps.places.PlaceResult[]>([])
+  const [beforeSortRatingNearShops, setBeforeSortRatingNearShops] = useState<google.maps.places.PlaceResult[]>([])
   const handleSortByRating = () => {
     if(isRating) {
       setIsRating(false)
-      setNearShops([...beforeSortNearShops])
+      setNearShops([...beforeSortRatingNearShops])
       return
     }
 
     setIsRating(true)
     const newNearShops = [...nearShops]
-    const newSortNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
+    const newSortRatingNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
       if(b.rating && a.rating) {
         return b.rating - a.rating
       }
       return 0;
     })
-    setBeforeSortNearShops([...nearShops])
-    setNearShops([...newSortNearShops])
+    setBeforeSortRatingNearShops([...nearShops])
+    setNearShops([...newSortRatingNearShops])
+  }
 
+  //口コミ順にソート
+  const [isReview, setIsReview] = useState(false)
+  const [beforeSortReviewNearShops, setBeforeSortReviewNearShops] = useState<google.maps.places.PlaceResult[]>([])
+  const handleSortByReview = () => {
+    if(isReview) {
+      setIsReview(false)
+      setNearShops([...beforeSortReviewNearShops])
+      return
+    }
+
+    setIsReview(true)
+    const newNearShops = [...nearShops]
+    const newSortReviewNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
+      if(b.user_ratings_total && a.user_ratings_total) {
+        return b.user_ratings_total - a.user_ratings_total
+      }
+      return 0;
+    })
+    setBeforeSortReviewNearShops([...nearShops])
+    setNearShops([...newSortReviewNearShops])
   }
 
   useEffect(() => {
@@ -463,10 +484,17 @@ const Home = () => {
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
               </div> */}
-              <div className="flex gap-2 items-center" onClick={handleSortByRating}>
-                <span className="text-black/70 cursor-pointer">評価順</span>
-                <ChevronDownIcon width={18} className={"mt-1 " + (isRating ? "rotate-0" : "rotate-180")}/>
+              <div className="flex gap-4">
+                <div className="flex gap-2 items-center" onClick={handleSortByRating}>
+                  <span className="text-black/70 cursor-pointer">評価順</span>
+                  <ChevronDownIcon width={18} className={"mt-1 " + (isRating ? "rotate-0" : "rotate-180")}/>
+                </div>
+                <div className="flex gap-2 items-center" onClick={handleSortByReview}>
+                  <span className="text-black/70 cursor-pointer">口コミ順</span>
+                  <ChevronDownIcon width={18} className={"mt-1 " + (isReview ? "rotate-0" : "rotate-180")}/>
+                </div>
               </div>
+
               <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/>
             </div>
             {nearShops.length > 0 ? (
