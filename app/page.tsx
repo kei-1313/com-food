@@ -11,6 +11,10 @@ import RecommendShop from "./components/home/RecommendShop/RecommendShop";
 import { getCookies, setCookie, hasCookie, deleteCookie, getCookie } from 'cookies-next';
 import SearchFreeWord from "./components/home/SearchFreeWord/SearchFreeWord";
 
+import {
+  ChevronDownIcon
+} from '@heroicons/react/24/outline'
+
 // const Home = () => {
 //   const ref = useRef(null)
   
@@ -390,18 +394,26 @@ const Home = () => {
   }
 
   //評価順にソート
+  const [isRating, setIsRating] = useState(false)
+  const [beforeSortNearShops, setBeforeSortNearShops] = useState<google.maps.places.PlaceResult[]>([])
   const handleSortByRating = () => {
+    if(isRating) {
+      setIsRating(false)
+      setNearShops([...beforeSortNearShops])
+      return
+    }
+
+    setIsRating(true)
     const newNearShops = [...nearShops]
-    // console.log(newNearShops);
-    
     const newSortNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
       if(b.rating && a.rating) {
         return b.rating - a.rating
       }
       return 0;
     })
-    
+    setBeforeSortNearShops([...nearShops])
     setNearShops([...newSortNearShops])
+
   }
 
   useEffect(() => {
@@ -417,7 +429,7 @@ const Home = () => {
   useEffect(() => {
     const tagQuery = tags.join(",")
     getNearShops(tagQuery, selectedOffice.position)
-    
+    setIsRating(false)
   },[tags,tagsContents,selectedOffice])
 
   return (
@@ -446,13 +458,14 @@ const Home = () => {
                 </li>
               ))}
             </ul>
-            <div className="flex justify-between my-10 max-sm:block max-sm:mb-7">
+            <div className="flex items-center justify-between my-10 max-sm:block max-sm:mb-7">
               {/* <div className="flex gap-4 mb-5 max-sm:mb-4 max-sm:gap-3">
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
               </div> */}
-              <div>
-                <span onClick={handleSortByRating} className="text-black/70 cursor-pointer">評価順</span>
+              <div className="flex gap-2 items-center" onClick={handleSortByRating}>
+                <span className="text-black/70 cursor-pointer">評価順</span>
+                <ChevronDownIcon width={18} className={"mt-1 " + (isRating ? "rotate-0" : "rotate-180")}/>
               </div>
               <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/>
             </div>
