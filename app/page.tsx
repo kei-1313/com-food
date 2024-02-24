@@ -14,6 +14,7 @@ import SearchFreeWord from "./components/home/SearchFreeWord/SearchFreeWord";
 import {
   ChevronDownIcon
 } from '@heroicons/react/24/outline'
+import SelectSort from "./components/home/SelectSort/SelectSort";
 
 // const Home = () => {
 //   const ref = useRef(null)
@@ -296,19 +297,6 @@ const Home = () => {
     return shops.results
   }
 
-  // const getNearShopsImage = async (photore_ference:string) => {
-  //   const params = {photoreference : photore_ference}
-  //   // console.log(params);
-    
-  //   const query = new URLSearchParams(params);
-  //   const res = await fetch(`/api/shop/photo?${query}`)
-  //   const shopImageBlob = await res.blob()
-  //   const shopImage = URL.createObjectURL(shopImageBlob)
-  //   console.log(shopImage);
-    
-  //   // setNearShopImages([...nearShopImages, shopImage])
-  // }
-
   const handleTags = (e: React.MouseEvent<HTMLInputElement>) => {
     const tagValue = e.currentTarget.value
     if(tagValue !== '') {
@@ -337,8 +325,6 @@ const Home = () => {
   }
 
   const handleSearchFreeWord = (value: string) => {
-    
-    
     getNearShops(value, selectedOffice.position)
   }
 
@@ -393,28 +379,119 @@ const Home = () => {
     }
   }
 
-  //評価順にソート
+  
   const [isRating, setIsRating] = useState(false)
-  const [beforeSortNearShops, setBeforeSortNearShops] = useState<google.maps.places.PlaceResult[]>([])
+  const [beforeSortRatingNearShops, setBeforeSortRatingNearShops] = useState<google.maps.places.PlaceResult[]>([])
+
+  const [isReview, setIsReview] = useState(false)
+  const [beforeSortReviewNearShops, setBeforeSortReviewNearShops] = useState<google.maps.places.PlaceResult[]>([])
+
+  //評価順にソート
   const handleSortByRating = () => {
     if(isRating) {
       setIsRating(false)
-      setNearShops([...beforeSortNearShops])
+      setNearShops([...beforeSortRatingNearShops])
       return
     }
 
     setIsRating(true)
     const newNearShops = [...nearShops]
-    const newSortNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
+    const newSortRatingNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
       if(b.rating && a.rating) {
         return b.rating - a.rating
       }
       return 0;
     })
-    setBeforeSortNearShops([...nearShops])
-    setNearShops([...newSortNearShops])
-
+    setBeforeSortRatingNearShops([...nearShops])
+    setNearShops([...newSortRatingNearShops])
   }
+
+  
+  //口コミ順にソート
+  const handleSortByReview = () => {
+    //口コミがソートされている場合
+    if(isReview) {
+      setIsReview(false)
+      setNearShops([...beforeSortReviewNearShops])
+      return
+    }
+
+    //評価がソートされていて、口コミがソートされていない場合
+    if(isRating) {
+      setIsReview(true)
+      const newNearShops = [...beforeSortRatingNearShops]
+      const newSortReviewNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
+        if(a.user_ratings_total && b.user_ratings_total && a.rating && b.rating) {
+          if(a.rating < b.rating) {
+            return b.user_ratings_total - a.user_ratings_total
+          }
+        }
+        return 0;
+      })
+      setBeforeSortReviewNearShops([...nearShops])
+      setNearShops([...newSortReviewNearShops])
+    }
+
+    //評価も口コミがソートされていない場合
+    setIsReview(true)
+    const newNearShops = [...nearShops]
+    const newSortReviewNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
+      if(b.user_ratings_total && a.user_ratings_total) {
+        return b.user_ratings_total - a.user_ratings_total
+      }
+      return 0;
+    })
+    setBeforeSortReviewNearShops([...nearShops])
+    setNearShops([...newSortReviewNearShops])
+  }
+
+  //評価、口コミ、価格のソート
+  const [isSort, setIsSort] = useState(false)
+  const [beforeSortNearShops, setBeforeSortNearShops] = useState<google.maps.places.PlaceResult[]>([])
+  const sortRef = useRef<HTMLSelectElement>(null)
+  const handleChangeSortValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selecedSortName = e.currentTarget.value
+    console.log(selecedSortName);
+    const newNearShops = [...nearShops]
+    setIsSort(true)
+    switch (selecedSortName) {
+      case "評価":
+      const newSortRatingNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
+        if(b.rating && a.rating) {
+          return b.rating - a.rating
+        }
+        return 0;
+      })
+      setBeforeSortNearShops([...nearShops])
+      setNearShops([...newSortRatingNearShops])
+        break;
+      case "口コミ":
+      const newSortReviewNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
+        if(b.user_ratings_total && a.user_ratings_total) {
+          return b.user_ratings_total - a.user_ratings_total
+        }
+        return 0;
+      })
+      setBeforeSortNearShops([...nearShops])
+      setNearShops([...newSortReviewNearShops])
+        break;
+      case "価格が安い":
+      const newSortLowPriceNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
+        if(b.price_level && a.price_level) {
+          return a.price_level - b.price_level
+        }
+        return 0;
+      })
+      console.log(newSortLowPriceNearShops);
+      setBeforeSortNearShops([...nearShops])
+      setNearShops([...newSortLowPriceNearShops])
+        break;
+    
+      default:
+        break;
+    }
+  }
+
 
   useEffect(() => {
     const initFunc = async () => {
@@ -429,7 +506,7 @@ const Home = () => {
   useEffect(() => {
     const tagQuery = tags.join(",")
     getNearShops(tagQuery, selectedOffice.position)
-    setIsRating(false)
+    setIsSort(false)
   },[tags,tagsContents,selectedOffice])
 
   return (
@@ -463,10 +540,20 @@ const Home = () => {
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
                 <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
               </div> */}
-              <div className="flex gap-2 items-center" onClick={handleSortByRating}>
-                <span className="text-black/70 cursor-pointer">評価順</span>
-                <ChevronDownIcon width={18} className={"mt-1 " + (isRating ? "rotate-0" : "rotate-180")}/>
+              <div>
+                <SelectSort sortRef={sortRef} onChange={handleChangeSortValue}/>
               </div>
+              {/* <div className="flex gap-4">
+                <div className="flex gap-2 items-center" onClick={handleSortByRating}>
+                  <span className="text-black/70 cursor-pointer">評価順</span>
+                  <ChevronDownIcon width={18} className={"mt-1 " + (isRating ? "rotate-0" : "rotate-180")}/>
+                </div>
+                <div className="flex gap-2 items-center" onClick={handleSortByReview}>
+                  <span className="text-black/70 cursor-pointer">口コミ順</span>
+                  <ChevronDownIcon width={18} className={"mt-1 " + (isReview ? "rotate-0" : "rotate-180")}/>
+                </div>
+              </div> */}
+
               <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/>
             </div>
             {nearShops.length > 0 ? (
