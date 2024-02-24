@@ -205,6 +205,7 @@ const Home = () => {
   const [offices, setOffices] = useState([
     {
       officeName: "東京本社",
+      place: "tokyo",
       position: {
         lat: "35.72295079725532",
         lng: "139.71215183258244"
@@ -212,6 +213,7 @@ const Home = () => {
     },
     {
       officeName: "名古屋支店",
+      place: "nagoya",
       position: {
         lat: "35.17365440275725",
         lng: "136.89874981534123"
@@ -219,6 +221,7 @@ const Home = () => {
     },
     {
       officeName: "札幌支店",
+      place: "sapporo",
       position: {
         lat: "43.072372229883534",
         lng: "141.3494175181069"
@@ -230,6 +233,7 @@ const Home = () => {
   const [selectedOffice, setSelectedOffice] = useState(
     {
       officeName: "東京本社",
+      place: "tokyo",
       position: {
         lat: "35.72295079725532",
         lng: "139.71215183258244"
@@ -282,7 +286,7 @@ const Home = () => {
   
   //1キロ圏内の20店舗を取得する
   const getNearShops = async (
-    query:string = "", 
+    query:string = "",
     position:OfficePostion = {
       lat: "35.72295079725532",
       lng: "139.71215183258244"
@@ -328,7 +332,6 @@ const Home = () => {
     getNearShops(value, selectedOffice.position)
   }
 
-
    ////フリーワード検索の処理
   const searchFreeBoxRef = useRef<HTMLInputElement>(null)
 
@@ -350,22 +353,25 @@ const Home = () => {
 
   //今週のおすすめ機能
   const [shuffledShop, setShuffledShop] = useState<google.maps.places.PlaceResult>({})
-
+  const [isFirst, setIsFirst] = useState(false)
 
 //   //初回時にcookieに保存、2回目からはcookieからデータを取得する
-  const handleCookie = (nearShopsData: google.maps.places.PlaceResult[]) => {
+  const handleCookie = (nearShopsData: google.maps.places.PlaceResult[], place: string) => {
+    // deleteCookie("shuffedShoptokyo")
+    // deleteCookie("shuffedShopnagoya")
+    // deleteCookie("shuffedShopsapporo")
     const shuffleNum = Math.floor(Math.random() * (nearShopsData.length + 1));
     
     const shuffleRecommendShopData = nearShopsData[shuffleNum]
     
     if(!shuffleRecommendShopData) return
-
     //cookieがセットされていない場合
-    if(!hasCookie('shuffedShop')) {
+    if(!hasCookie('shuffedShop' + place)) {
       const shuffledShopJson = JSON.stringify(shuffleRecommendShopData)
-      setCookie('shuffedShop', shuffledShopJson);
+      setShuffledShop({...shuffleRecommendShopData})
+      setCookie('shuffedShop'+ place, shuffledShopJson);
     } else {
-      const shuffledShopfromCookie = getCookie('shuffedShop')
+      const shuffledShopfromCookie = getCookie('shuffedShop'+ place)
         try {
           if(shuffledShopfromCookie) {
             const shuffledShopParsedData = JSON.parse(shuffledShopfromCookie)
@@ -377,72 +383,6 @@ const Home = () => {
           console.error(error);
         }
     }
-  }
-
-  
-  const [isRating, setIsRating] = useState(false)
-  const [beforeSortRatingNearShops, setBeforeSortRatingNearShops] = useState<google.maps.places.PlaceResult[]>([])
-
-  const [isReview, setIsReview] = useState(false)
-  const [beforeSortReviewNearShops, setBeforeSortReviewNearShops] = useState<google.maps.places.PlaceResult[]>([])
-
-  //評価順にソート
-  const handleSortByRating = () => {
-    if(isRating) {
-      setIsRating(false)
-      setNearShops([...beforeSortRatingNearShops])
-      return
-    }
-
-    setIsRating(true)
-    const newNearShops = [...nearShops]
-    const newSortRatingNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
-      if(b.rating && a.rating) {
-        return b.rating - a.rating
-      }
-      return 0;
-    })
-    setBeforeSortRatingNearShops([...nearShops])
-    setNearShops([...newSortRatingNearShops])
-  }
-
-  
-  //口コミ順にソート
-  const handleSortByReview = () => {
-    //口コミがソートされている場合
-    if(isReview) {
-      setIsReview(false)
-      setNearShops([...beforeSortReviewNearShops])
-      return
-    }
-
-    //評価がソートされていて、口コミがソートされていない場合
-    if(isRating) {
-      setIsReview(true)
-      const newNearShops = [...beforeSortRatingNearShops]
-      const newSortReviewNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
-        if(a.user_ratings_total && b.user_ratings_total && a.rating && b.rating) {
-          if(a.rating < b.rating) {
-            return b.user_ratings_total - a.user_ratings_total
-          }
-        }
-        return 0;
-      })
-      setBeforeSortReviewNearShops([...nearShops])
-      setNearShops([...newSortReviewNearShops])
-    }
-
-    //評価も口コミがソートされていない場合
-    setIsReview(true)
-    const newNearShops = [...nearShops]
-    const newSortReviewNearShops = newNearShops.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult): number => {
-      if(b.user_ratings_total && a.user_ratings_total) {
-        return b.user_ratings_total - a.user_ratings_total
-      }
-      return 0;
-    })
-    setBeforeSortReviewNearShops([...nearShops])
-    setNearShops([...newSortReviewNearShops])
   }
 
   //評価、口コミ、価格のソート
@@ -492,22 +432,40 @@ const Home = () => {
     }
   }
 
-
-  useEffect(() => {
-    const initFunc = async () => {
-      const nearShopsData = await getNearShops()
-      
-      handleCookie(nearShopsData)
-    };
-    
-    initFunc()
-  },[])
-
   useEffect(() => {
     const tagQuery = tags.join(",")
     getNearShops(tagQuery, selectedOffice.position)
     setIsSort(false)
-  },[tags,tagsContents,selectedOffice])
+  },[tags,tagsContents])
+
+  useEffect(() => {
+    const initRecommend = async () => {
+      const tagQuery = tags.join(",")
+      switch (selectedOffice.place) {
+        case "tokyo":
+          const nearShopsData = await getNearShops(tagQuery, selectedOffice.position)
+          handleCookie(nearShopsData, selectedOffice.place)
+          // console.log(shuffledShop);
+          console.log("東京");
+          break;
+        case "nagoya":
+          const nearNagoyaShopsData = await getNearShops(tagQuery, selectedOffice.position)
+          handleCookie(nearNagoyaShopsData, selectedOffice.place)
+          console.log("名古屋");
+          break;
+        case "sapporo":
+          const nearSapporoShopsData = await getNearShops(tagQuery, selectedOffice.position)
+          handleCookie(nearSapporoShopsData, selectedOffice.place)
+          console.log("札幌");
+          break;
+        default:
+          break;
+      }
+    };
+    
+    initRecommend()
+  },[selectedOffice])
+
 
   return (
       <div>
@@ -536,23 +494,9 @@ const Home = () => {
               ))}
             </ul>
             <div className="flex items-center justify-between my-10 max-sm:block max-sm:mb-7">
-              {/* <div className="flex gap-4 mb-5 max-sm:mb-4 max-sm:gap-3">
-                <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-[#3EB36D] font-bold">本日営業中の店舗</button>
-                <button className="px-6 py-4 max-sm:px-3 max-sm:py-3 bg-sky-500">本日定休日の店舗</button>
-              </div> */}
               <div>
                 <SelectSort sortRef={sortRef} onChange={handleChangeSortValue}/>
               </div>
-              {/* <div className="flex gap-4">
-                <div className="flex gap-2 items-center" onClick={handleSortByRating}>
-                  <span className="text-black/70 cursor-pointer">評価順</span>
-                  <ChevronDownIcon width={18} className={"mt-1 " + (isRating ? "rotate-0" : "rotate-180")}/>
-                </div>
-                <div className="flex gap-2 items-center" onClick={handleSortByReview}>
-                  <span className="text-black/70 cursor-pointer">口コミ順</span>
-                  <ChevronDownIcon width={18} className={"mt-1 " + (isReview ? "rotate-0" : "rotate-180")}/>
-                </div>
-              </div> */}
 
               <SearchFreeWord searchFreeBoxRef={searchFreeBoxRef} onKeyDown={handleInputKeyDown} onClick={handleSearchFreeWordClickButton}/>
             </div>
