@@ -7,6 +7,7 @@ import { RefObject } from "react";
 //本社、支店の情報型
 interface Office {
   officeName: string;
+  place: string;
   position: {
     lat: string;
     lng: string;

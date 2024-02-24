@@ -205,6 +205,7 @@ const Home = () => {
   const [offices, setOffices] = useState([
     {
       officeName: "東京本社",
+      place: "tokyo",
       position: {
         lat: "35.72295079725532",
         lng: "139.71215183258244"
@@ -212,6 +213,7 @@ const Home = () => {
     },
     {
       officeName: "名古屋支店",
+      place: "nagoya",
       position: {
         lat: "35.17365440275725",
         lng: "136.89874981534123"
@@ -219,6 +221,7 @@ const Home = () => {
     },
     {
       officeName: "札幌支店",
+      place: "sapporo",
       position: {
         lat: "43.072372229883534",
         lng: "141.3494175181069"
@@ -230,6 +233,7 @@ const Home = () => {
   const [selectedOffice, setSelectedOffice] = useState(
     {
       officeName: "東京本社",
+      place: "tokyo",
       position: {
         lat: "35.72295079725532",
         lng: "139.71215183258244"
@@ -282,7 +286,7 @@ const Home = () => {
   
   //1キロ圏内の20店舗を取得する
   const getNearShops = async (
-    query:string = "", 
+    query:string = "",
     position:OfficePostion = {
       lat: "35.72295079725532",
       lng: "139.71215183258244"
@@ -349,22 +353,25 @@ const Home = () => {
 
   //今週のおすすめ機能
   const [shuffledShop, setShuffledShop] = useState<google.maps.places.PlaceResult>({})
-
+  const [isFirst, setIsFirst] = useState(false)
 
 //   //初回時にcookieに保存、2回目からはcookieからデータを取得する
-  const handleCookie = (nearShopsData: google.maps.places.PlaceResult[]) => {
+  const handleCookie = (nearShopsData: google.maps.places.PlaceResult[], place: string) => {
+    // deleteCookie("shuffedShoptokyo")
+    // deleteCookie("shuffedShopnagoya")
+    // deleteCookie("shuffedShopsapporo")
     const shuffleNum = Math.floor(Math.random() * (nearShopsData.length + 1));
     
     const shuffleRecommendShopData = nearShopsData[shuffleNum]
     
     if(!shuffleRecommendShopData) return
-
     //cookieがセットされていない場合
-    if(!hasCookie('shuffedShop')) {
+    if(!hasCookie('shuffedShop' + place)) {
       const shuffledShopJson = JSON.stringify(shuffleRecommendShopData)
-      setCookie('shuffedShop', shuffledShopJson);
+      setShuffledShop({...shuffleRecommendShopData})
+      setCookie('shuffedShop'+ place, shuffledShopJson);
     } else {
-      const shuffledShopfromCookie = getCookie('shuffedShop')
+      const shuffledShopfromCookie = getCookie('shuffedShop'+ place)
         try {
           if(shuffledShopfromCookie) {
             const shuffledShopParsedData = JSON.parse(shuffledShopfromCookie)
@@ -426,20 +433,39 @@ const Home = () => {
   }
 
   useEffect(() => {
-    const initFunc = async () => {
-      const nearShopsData = await getNearShops()
-      
-      handleCookie(nearShopsData)
-    };
-    
-    initFunc()
-  },[])
-
-  useEffect(() => {
     const tagQuery = tags.join(",")
     getNearShops(tagQuery, selectedOffice.position)
     setIsSort(false)
-  },[tags,tagsContents,selectedOffice])
+  },[tags,tagsContents])
+
+  useEffect(() => {
+    const initRecommend = async () => {
+      const tagQuery = tags.join(",")
+      switch (selectedOffice.place) {
+        case "tokyo":
+          const nearShopsData = await getNearShops(tagQuery, selectedOffice.position)
+          handleCookie(nearShopsData, selectedOffice.place)
+          // console.log(shuffledShop);
+          console.log("東京");
+          break;
+        case "nagoya":
+          const nearNagoyaShopsData = await getNearShops(tagQuery, selectedOffice.position)
+          handleCookie(nearNagoyaShopsData, selectedOffice.place)
+          console.log("名古屋");
+          break;
+        case "sapporo":
+          const nearSapporoShopsData = await getNearShops(tagQuery, selectedOffice.position)
+          handleCookie(nearSapporoShopsData, selectedOffice.place)
+          console.log("札幌");
+          break;
+        default:
+          break;
+      }
+    };
+    
+    initRecommend()
+  },[selectedOffice])
+
 
   return (
       <div>
